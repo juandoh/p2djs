@@ -12,8 +12,6 @@ class Courses extends Model
      * @var string
      */
     protected $table = 'courses';
-    //protected $primaryKey = 'code';
-    //public $timestamps = false; 
     
     /**
      * The attributes that are mass assignable.
@@ -24,8 +22,8 @@ class Courses extends Model
         "name", "credits", "mhours", "ihours", "ctype", "precourses", "valuable", "qualifiable" ,"p_academico","semester"
         ];
     
-    public function p_academico(){
-        return $this->belongsTo("App\AcademicPrograms",'id','p_academico');
+    public function program(){
+        return $this->hasOne("App\AcademicPrograms",'id','p_academico');
     }
 
     public function competences(){

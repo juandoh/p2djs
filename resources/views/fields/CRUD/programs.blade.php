@@ -32,8 +32,8 @@
 </div>
 
 <div class="form-group{{ $errors->has('credits') ? ' has-error' : '' }}" id="creditsgroup">
-        {{ Form::label('credits', 'Creditos', ['class'=>'control-label']) }}
-        {{ Form::number('credits',(isset($program)?$program->credits:old('credits')),['class'=>'form-control','required'=>'']) }}
-        {{-- //onkeyup="check('email','shortname','emailgroup')"  --}}
-        {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'credits')}}    
-    </div>
+    {{ Form::label('credits', 'Creditos', ['class'=>'control-label']) }}
+    {{ Form::number('credits',(isset($program)?$program->credits:old('credits')),['class'=>'form-control','required'=>'']) }}
+    {{-- //onkeyup="check('email','shortname','emailgroup')"  --}}
+    {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'credits')}}    
+</div>

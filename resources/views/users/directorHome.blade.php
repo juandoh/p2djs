@@ -12,29 +12,14 @@
             @endif
 
             @if(isset($tab))
-                <ul class="nav nav-tabs">
-                    <li 
-                    @if($tab === 'consultar')
-                        class = "active"                                
-                    @endif
-                    ><a href="/home/consultar">Consultar Cursos</a></li>
-                    <li 
-                    @if($tab === 'crear')
-                        class = "active"
-                    @endif
-                    ><a href="/home/crear">Crear Cursos</a></li>
-                    <li 
-                    @if($tab === 'programa')
-                        class = "active"
-                    @endif
-                    ><a href="/home/programa">Configuración del Programa Academico</a></li>
-                    <li 
-                    @if($tab === 'configuracion')
-                        class = "active"
-                    @endif
-                    ><a href="/home/configuracion">Configuración</a></li>
-                </ul>
-            @endif           
+                <?php $tabs=[
+                    'consultar'=>'Consultar Cursos',
+                    'crear'=>'Crear Cursos',
+                    'programa'=>'Configuración del Programa Academico',
+                    'configuracion'=>'Configuración'
+                ];?>
+                @include('users.homeTabs')                
+            @endif
             
             <div class="tab-content">
                 @if($tab === 'consultar')

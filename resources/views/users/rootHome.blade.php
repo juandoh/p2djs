@@ -12,92 +12,19 @@
         @endif
 
         @if(isset($tab))
-            <ul class="nav nav-tabs">
-                <li 
-                @if($tab === 'consultar')
-                    class = "active"                                
-                @endif
-                ><a href="/home/consultar">Consultar Usuarios</a></li>
-                <li 
-                @if($tab === 'crear')
-                    class = "active"
-                @endif
-                ><a href="/home/crear/docente">Crear Usuarios</a></li>
-                <li 
-                @if($tab === 'facultades')
-                    class = "active"
-                @endif
-                ><a href="/home/facultades">Manejo de Facultades</a></li>
-                <li 
-                @if($tab === 'escuelas')
-                    class = "active"
-                @endif
-                ><a href="/home/escuelas">Manejo de Escuelas</a></li>
-            </ul>
-        @endif
-        
+            <?php $tabs=[
+                'consultar'=>'Consultar Usuarios',
+                'crear/docente'=>'Crear Usuarios',
+                'facultades'=>'Manejo de Facultades',
+                'escuelas'=>'Manejo de Escuelas'
+            ];?>
+            @include('users.homeTabs')             
+        @endif 
+                
         <div class="tab-content">
             @if($tab === 'consultar')
                 <div id="home" class="tab-pane fade in active">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h4>Listado de Usuarios:</h4>
-                            <input class="form-control" id="myInput" type="text" placeholder="Buscar..">
-                            <script>
-                                $(document).ready(function(){
-                                    $("#myInput").on("keyup", function() {
-                                    var value = $(this).val().toLowerCase();
-                                    $("#myTable tr").filter(function() {
-                                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                                    });
-                                    });
-                                });
-                            </script>
-                        </div>                  
-                        <div class="panel-body">
-                            <table class="table table-responsive table-hover">
-                                <thead>
-                                    <th>Id</th>
-                                    <th>Nombre</th>                                                
-                                    <th>Rol</th>
-                                    <th>Habilitado</th>
-                                    <th>Opciones</th>
-                                </thead>
-                                @if(isset($users))
-                                    <tbody id="myTable">
-                                        @foreach($users as $user)
-                                            <tr>
-                                                <th>{{$user->id}}</th>
-                                                <th>{{$user->fullname}}</th>                                                            
-                                                @if($user->role == 0)
-                                                    <th> Administrador </th>
-                                                @elseif($user->role == 1)
-                                                    <th> Docente </th>
-                                                @elseif($user->role == 2)
-                                                    <th> Director </th>
-                                                @elseif($user->role == 3)
-                                                    <th> Decano </th>
-                                                @endif
-                                                @if(!is_null($user->deleted_at))
-                                                    <th> No </th>
-                                                @else
-                                                    <th> Si </th>
-                                                @endif
-
-                                                @if($user->role != 0)
-                                                    <th>@include('forms.listBtn',['where'=>'User','object'=>$user])</th>
-                                                @endif
-                                            </tr>                                                        
-                                        @endforeach
-                                    </tbody>                                                
-                                @endif
-                            </table>
-                            @if(isset($users))
-                            <center>{{ $users->links() }}</center>
-                            @endif
-                        </div>
-                    </div>
-
+                    @include('lists.users')
                 </div>
             @endif
             @if($tab === 'crear')
@@ -128,50 +55,8 @@
                                 ['title'=>'Escuela',
                                 'option'=>'create',
                                 'model'=>'School',
-                                'fields'=>'schools']])                            
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <h5>Listado de Escuelas:</h5>
-                                <input class="form-control" id="myInput" type="text" placeholder="Buscar..">
-                                <script>
-                                    $(document).ready(function(){
-                                        $("#myInput").on("keyup", function() {
-                                        var value = $(this).val().toLowerCase();
-                                        $("#myTable tr").filter(function() {
-                                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                                        });
-                                        });
-                                    });
-                                </script>                                
-                            </div>
-
-                            <div class="panel-body">
-                                <table class="table table-responsive table-hover">
-                                    <thead>
-                                        <th>Id</th>
-                                        <th>Nombre</th>                                                
-                                        <th>Descripción</th>                                                
-                                        <th>Opciones</th>
-                                    </thead>
-                                    @if(isset($schools))
-                                        <tbody id="myTable">
-                                            @foreach($schools as $school)
-                                                <tr>
-                                                    <th>{{$school->id}}</th>
-                                                    <th>{{$school->name}}</th>
-                                                    <th>{{$school->detail}}</th>
-                                                    <th>@include('forms.listBtn',['where'=>'School','object'=>$school])</th>                                  
-                                                                                             
-                                                </tr>                                                        
-                                            @endforeach
-                                        </tbody>                                                
-                                    @endif
-                                </table>
-                                @if(isset($schools))
-                                <center>{{ $schools->links() }}</center>
-                                @endif
-                            </div>
-                        </div>
+                                'fields'=>'schools']])
+                        @include('lists.schools')
                     </div>
                 </div>
             @endif
@@ -184,49 +69,7 @@
                                 'option'=>'create',
                                 'model'=>'Faculty',
                                 'fields'=>'faculties']]) 
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <h5>Listado de Facultades:</h5>
-                                <input class="form-control" id="myInput" type="text" placeholder="Buscar..">
-                                <script>
-                                    $(document).ready(function(){
-                                        $("#myInput").on("keyup", function() {
-                                        var value = $(this).val().toLowerCase();
-                                        $("#myTable tr").filter(function() {
-                                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                                        });
-                                        });
-                                    });
-                                </script>                                
-                            </div>
-
-                            <div class="panel-body">
-                                <table class="table table-responsive table-hover">
-                                    <thead>
-                                        <th>Id</th>
-                                        <th>Nombre</th>                                                
-                                        <th>Descripción</th>                                                
-                                        <th>Opciones</th>
-                                    </thead>
-                                    @if(isset($faculties))
-                                        <tbody id="myTable">
-                                            @foreach($faculties as $faculty)
-                                                <tr>
-                                                    <th>{{$faculty->id}}</th>
-                                                    <th>{{$faculty->name}}</th>
-                                                    <th>{{$faculty->detail}}</th>
-                                                    <th>@include('forms.listBtn',['where'=>'Faculty','object'=>$faculty])</th>
-                                                    
-                                                </tr>                                                        
-                                            @endforeach
-                                        </tbody>                                                
-                                    @endif
-                                </table>
-                                @if(isset($faculties))
-                                <center>{{ $faculties->links() }}</center>
-                                @endif
-                            </div>
-                        </div>
+                        @include('lists.faculties')
                     </div>
                 </div>
             @endif

@@ -1,14 +1,14 @@
-@if(isset($where) and isset($object))
+@if(isset($where) and isset($id))
 <div class="btn-group">                                                    
-    <a  class="btn btn-primary" href="{{ '/'.strtolower($where).'/'.$object->id  }}" style="color: white" >Editar</a>
-    @if(!is_null($object->deleted_at))
-        <button type="submit" class="btn btn-warning" onclick="$('#enable{{$where}}').submit()">Habilitar</button>
-        <form method="POST" action="{{ '/enable'.$where.'/'.$object->id }}" id="enable{{ $where }}">
+    <a  class="btn btn-primary" href="{{ '/'.strtolower($where).'/'.$id  }}" style="color: white" >Editar</a>
+    @if($deleted)
+        <button type="submit" class="btn btn-warning" onclick="$('#enable{{$where.$id}}').submit()">Habilitar</button>
+        <form method="POST" action="{{ '/enable'.$where.'/'.$id }}" id="enable{{ $where.$id }}">
             {{ csrf_field() }}                                                                
-        </form>
+        </form>        
     @else
-        <button type="submit" class="btn btn-danger" onclick="$('#del{{$where}}').submit()">Eliminar</button>
-        <form method="POST" action="{{ '/delete'.$where.'/'.$object->id }}" id="del{{ $where }}">
+        <button type="submit" class="btn btn-danger" onclick="$('#del{{$where.$id}}').submit()">Eliminar</button>
+        <form method="POST" action="{{ '/delete'.$where.'/'.$id }}" id="del{{ $where.$id }}">
             {{ csrf_field() }}                                                            
         </form>
     @endif

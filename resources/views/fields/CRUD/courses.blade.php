@@ -42,44 +42,53 @@
     {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'ihours')}}
 </div>
 
-<div class="form-group">
+<div class="form-group well {{ $errors->has('ctype') ? ' has-error' : '' }}">
     {{ Form::label('ctype', 'Tipo de Asignatura:', ['class' => 'control-label']) }}
     @foreach($options as $val=>$opt)
-        <div class="form-check form-check-inline">
-            @if(isset($course))
-                @if($course->ctype == (int)$val)
-                    {{ Form::radio('ctype',$val, ['checked'=>'','class'=>'form-check-input']) }}
+        <div class="radio">
+            <label>
+                @if(isset($course))
+                    @if($course->ctype == (int)$val)
+                        {{ Form::radio('ctype',$val, ['checked'=>'']) }}
+                    @else
+                        {{ Form::radio('ctype',$val) }}
+                    @endif
                 @else
-                    {{ Form::radio('ctype',$val,['class'=>'form-check-input']) }}
-                @endif
-            @else
-                {{ Form::radio('ctype',$val,['class'=>'form-check-input']) }}
-            @endif                    
-            {!! Form::label('ctype',$opt, ['class'=>'form-check-label']) !!}                    
+                    {{ Form::radio('ctype',$val) }}
+                @endif            
+                {{ $opt }}
+            </label>
         </div>
     @endforeach
     {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'ctype')}}
 </div>
 
-<div class="form-check form-check-inline">
-    <input type="checkbox" class="form-check-input" name="valuable" value="1" 
-        @if(isset($course)) 
-            @if($course->valuable) 
-                checked
+<div class="well">
+    {{ Form::label('', 'Caracteristicas:', ['class' => 'control-label']) }}
+    <br>
+    <div class="checkbox-inline">
+        <label>
+        <input type="checkbox" class="" name="valuable" value="1" 
+            @if(isset($course)) 
+                @if($course->valuable) 
+                    checked
+                @endif
+            @endif>
+            Validable
+        </label>    
+    </div>
+    <div class="checkbox-inline">
+        <label>
+        <input type="checkbox" class="" name="qualifiable" value="false"
+            @if(isset($course)) 
+                @if($course->qualifiable)
+                    checked
+                @endif
             @endif
-        @endif
-    >
-    {!! Form::label('valuable', 'Validable', ['class'=>"form-check-label"]) !!} 
-</div>
-<div class="form-check ">                
-    <input type="checkbox" class="form-check-input" name="qualifiable" value="false"
-        @if(isset($course)) 
-            @if($course->qualifiable) 
-                checked
-            @endif
-        @endif
-    >
-    {!! Form::label('valuable', 'Validable', ['class'=>"form-check-label"]) !!} 
+        >
+        Habilitable
+        </label>    
+    </div>
 </div>
 <div class="form-group {{ $errors->has('precourses') ? ' has-error' : '' }}">
     {{ Form::label('precourses', 'Prerrequisitos (separados con comas)', ['class' => 'control-label']) }}
