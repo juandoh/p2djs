@@ -20,7 +20,7 @@ class DirectorController extends Controller
         if($id === 'consultar'){
             return view("users.directorHome")
                     ->withTab($id) 
-                    ->withCourses(CoursesController::listCourses());
+                    ->withCourses(CoursesController::allCourses());
         }
         
         return view("users.directorHome")->withTab($id);
