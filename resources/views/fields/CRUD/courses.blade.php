@@ -81,12 +81,12 @@
     >
     {!! Form::label('valuable', 'Validable', ['class'=>"form-check-label"]) !!} 
 </div>
-<div class="form-group">
+<div class="form-group {{ $errors->has('precourses') ? ' has-error' : '' }}">
     {{ Form::label('precourses', 'Prerrequisitos (separados con comas)', ['class' => 'control-label']) }}
     {{ Form::text('precourses',(isset($course) ? $course->precourses:old('precourses')),['class'=>'form-control','required'=>''])  }}
     {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'precourses')}}
 </div>
-<div class="form-group">
+<div class="form-group {{ $errors->has('p_academico') ? ' has-error' : '' }}">
     {{ Form::label('p_academico', 'Seleccione un Programa Academico', ['class' => 'control-label']) }}            
     {{ Form::select('p_academico',
                     ['-1'=>'']+$programOpt,

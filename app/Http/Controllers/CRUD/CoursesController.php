@@ -31,8 +31,12 @@ class CoursesController extends Controller
         'required'=>'El atributo es obligatorio',
         'integer'=>'El atributo debe ser un valor entero',
         'semester.min'=>'El semestre debe tener un valor minimo de :min',
-        'semester.max'=>'El semestre debe tener un valor maximo de :max',
-        'p_academico'=>'El Programa Academico seleccionado no se encuentra en la base de datos',
+        'credits.min'=>'El numero de creditos debe ser minimo de :min',
+        'mhours.min'=>'El numero de <strong>horas magistrales</strong> debe ser minimo de :min',
+        'ihours.min'=>'El numero de <strong>horas independientes</strong> debe ser minimo de :min',
+        'ctype.min'=>'Tipo de curso incorrecto',
+        'ctype.max'=>'Tipo de curso incorrecto',
+        'p_academico.exists'=>'El Programa Academico seleccionado no se encuentra en la base de datos',
         'p_academico.min'=>'El Programa Academico seleccionado no se encuentra en la base de datos',
     ];
 
@@ -108,9 +112,10 @@ class CoursesController extends Controller
 
     //POST
     public function create(Request $request){
-        dd($request->all());
+        //dd($request->all());
         $data = $request->all();
         $this->validator($data,$this->rules)->validate();
+        return redirect()->back();
     }
 
     public function update(Request $request){
