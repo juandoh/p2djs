@@ -38,6 +38,6 @@ class ViewsController extends Controller
             }
         }
 
-        return view("welcome");
+        return redirect("/");
     }
 }
