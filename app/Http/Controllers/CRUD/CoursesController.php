@@ -108,7 +108,7 @@ class CoursesController extends Controller
 
     //POST
     public function create(Request $request){
-        //dd($request->all());
+        dd($request->all());
         $data = $request->all();
         $this->validator($data,$this->rules)->validate();
     }
