@@ -19,6 +19,7 @@ class CreateCoursesTable extends Migration
             $table->string('name');
             $table->smallInteger('credits');
             $table->smallInteger('mhours');
+            $table->smallInteger('ihours');
             $table->smallInteger('ctype');
             $table->string('precourses');
             $table->boolean('valuable')->default(1);

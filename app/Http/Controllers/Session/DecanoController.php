@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Session;
 use App\Models\Decano;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\CRUD\CoursesController;
 use App\Http\Controllers\CRUD\SchoolsController;
 use App\Http\Controllers\CRUD\AcademicProgramsController;
 
@@ -25,7 +26,7 @@ class DecanoController extends Controller
         }
 
         if($id === 'consultar')
-            return view("users.decanoHome",["tab"=>$id]);//->withUsers(RegisterController::listUsers());
+            return view("users.decanoHome",["tab"=>$id])->withCourses(CoursesController::paginateCourses());
         elseif($id === 'crear')
             return view("users.decanoHome",["tab"=>$id])->withSchools(SchoolsController::allSchools());
         elseif($id === 'programas')
