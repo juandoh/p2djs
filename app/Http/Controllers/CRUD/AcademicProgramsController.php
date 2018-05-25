@@ -41,6 +41,18 @@ class AcademicProgramsController extends Controller
         ]);
     }
 
+    protected function edit(array $data){
+        $id = $data['id'];
+        $ap = AcademicPrograms::find($id);
+        
+        $ap->name = $data['name'];
+        $ap->school = $data['school'];
+        $ap->semester = $data['semester'];
+        $ap->credits = $data['credits'];
+
+        return $ap->save();
+    }
+
     public function showEdit($id){        
         if(!is_null($id)){
             $user = Auth::user();
@@ -64,17 +76,6 @@ class AcademicProgramsController extends Controller
         }
     }
 
-    protected function edit(array $data){
-        $id = $data['id'];
-        $ap = AcademicPrograms::find($id);
-        
-        $ap->name = $data['name'];
-        $ap->school = $data['school'];
-        $ap->semester = $data['semester'];
-        $ap->credits = $data['credits'];
-
-        return $ap->save();
-    }
 
     public static function allPrograms(){
         return AcademicPrograms::all();  

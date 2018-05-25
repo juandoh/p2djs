@@ -18,12 +18,14 @@
                 'facultades'=>'Manejo de Facultades',
                 'escuelas'=>'Manejo de Escuelas'
             ];?>
+            
             @include('users.homeTabs')             
+            
         @endif 
                 
         <div class="tab-content">
             @if($tab === 'consultar')
-                <div id="home" class="tab-pane fade in active">
+                <div id="home" class="tab-pane active">
                     @include('lists.users')
                 </div>
             @endif

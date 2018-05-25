@@ -19,11 +19,25 @@ class Courses extends Model
      * @var array
      */
     protected $fillable = [        
-        "name", "credits", "mhours", "ihours", "ctype", "precourses", "valuable", "qualifiable" ,"p_academico","semester"
+        "name", 
+        "credits", 
+        "mhours", 
+        "ihours", 
+        "ctype", 
+        "precourses", 
+        "valuable",
+        "qualifiable" ,
+        "p_academico",
+        "semester",
+        "created_by"
         ];
     
     public function program(){
         return $this->hasOne("App\AcademicPrograms",'id','p_academico');
+    }
+
+    public function creator(){
+        return $this->hasOne("App\User",'id','created_by');
     }
 
     public function competences(){

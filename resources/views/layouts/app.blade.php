@@ -12,6 +12,13 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <script src="{{ asset('js/jquery.js') }}"></script>
+    <style type="text/css">
+        @media(min-width:992px){
+            .r-offset {
+                margin-right: 8.33333%;
+            }    
+        }        
+    </style>
 </head>
 <body>
     <div id="app">

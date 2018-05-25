@@ -19,7 +19,7 @@ class DocenteController extends Controller
         if($id === 'consultar'){
             return view("users.docenteHome")
                     ->withTab($id) 
-                    ->withCourses(CoursesController::paginateCourses());
+                    ->withCourses(CoursesController::allTeacherCourses());
         }
         
         return view("users.docenteHome")->withTab($id);

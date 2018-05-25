@@ -25,14 +25,15 @@ class CreateCoursesTable extends Migration
             $table->boolean('valuable')->default(1);
             $table->boolean('qualifiable')->default(1);            
             $table->integer('p_academico')->unsigned()->index();
-            $table->smallInteger('semester');     
+            $table->smallInteger('semester');
+            $table->integer('created_by')->unsigned()->index();
             $table->timestamps();
-        });
-        
-        Schema::table('courses', function (Blueprint $table) {
             $table->foreign('p_academico')
                     ->references('id')
                     ->on('academic_programs');
+            $table->foreign('created_by')
+                    ->references('id')
+                    ->on('users');
         });
     }
 

@@ -35,4 +35,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $dates = ['deleted_at'];
+
+    public function courses(){
+        return $this->hasMany('App\Courses','created_by','id');
+    }
 }

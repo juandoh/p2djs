@@ -49,6 +49,12 @@
                 font-size: 84px;
             }
 
+            @media(max-width:400px) {
+                .title {
+                    font-size: 40px;
+                }                
+            }
+
             .links > a {
                 color: #636b6f;
                 padding: 0 25px;
@@ -104,9 +110,7 @@
                     <center>
                         <h4>
                         <p align="center" style="width:50%;">
-                            Para apoyar la reforma curricular de la Facultad de Ingeniería de la Universidad del Valle, se requiere el
-                            desarrollo de un sistema que asista a los docentes en la tarea de diseño de los cursos y que permita a los
-                            directores de programa y a la decanatura la visualización de los diseños y validación de algunas reglas.
+                            Para apoyar la reforma curricular de la Facultad de Ingeniería de la Universidad del Valle, se desarrolló este sistema para asistir a los docentes en la tarea de diseño de los cursos.
                         </p>
                         </h4>
                     </center>

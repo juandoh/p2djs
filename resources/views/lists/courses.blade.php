@@ -8,7 +8,7 @@
     }
     $what='Cursos';
     $where = 'Course';
-    $links = $courses->links();
+    $links = $courses->links();    
 ?>
     @include('lists.masterlist')
 @endif

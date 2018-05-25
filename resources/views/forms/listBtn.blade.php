@@ -1,15 +1,15 @@
 @if(isset($where) and isset($id))
-<div class="btn-group">                                                    
-    <a  class="btn btn-primary" href="{{ '/'.strtolower($where).'/'.$id  }}" style="color: white" >Editar</a>
+<div class="btn-group btn-group-justified" style="max-width: 300px;min-width: 160px;">    
+    <a  class="btn btn-primary" href="{{ '/'.strtolower($where).'/'.$id  }}" >Editar</a>
     @if($deleted)
-        <button type="submit" class="btn btn-warning" onclick="$('#enable{{$where.$id}}').submit()">Habilitar</button>
-        <form method="POST" action="{{ '/enable'.$where.'/'.$id }}" id="enable{{ $where.$id }}">
-            {{ csrf_field() }}                                                                
-        </form>        
+        <a class="btn btn-warning" onclick="$('#en{{$where.$id}}').submit()">Habilitar</a>
+        <form method="POST" action="{{ '/enable'.$where.'/'.$id }}" id="en{{ $where.$id }}" style="display: none;">
+            {{ csrf_field() }} 
+        </form>
     @else
-        <button type="submit" class="btn btn-danger" onclick="$('#del{{$where.$id}}').submit()">Eliminar</button>
-        <form method="POST" action="{{ '/delete'.$where.'/'.$id }}" id="del{{ $where.$id }}">
-            {{ csrf_field() }}                                                            
+        <a class="btn btn-danger" onclick="$('#del{{$where.$id}}').submit()">Eliminar</a>
+        <form method="POST" action="{{ '/delete'.$where.'/'.$id }}" id="del{{ $where.$id }}" style="display: none;">
+            {{ csrf_field() }} 
         </form>
     @endif
 </div>

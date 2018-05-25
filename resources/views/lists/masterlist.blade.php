@@ -15,7 +15,7 @@
         });
         </script>
     </div>
-    <div class="panel-body">
+    <div class="panel-body" style="overflow: scroll;">
         <table class="table table-responsive table-hover">
             <thead>
                 @foreach ($tableHeaders as $title)
@@ -31,7 +31,9 @@
                         @endif
                     @endforeach                    
                         {{-- listBtn uses $where--}}                        
-                        <th>@include('forms.listBtn',['id'=>$row['id'],'deleted'=>$row['deleted']])</th>
+                        <th>
+                            @include('forms.listBtn',['id'=>$row['id'],'deleted'=>$row['deleted']])
+                        </th>
                 </tr>
                 @endforeach                
             </tbody>            

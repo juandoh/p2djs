@@ -9,6 +9,7 @@ use App\AcademicPrograms;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\MessageBag;
 
 class CoursesController extends Controller
 {
@@ -51,34 +52,39 @@ class CoursesController extends Controller
             "precourses", "valuable", "qualifiable" ,"p_academico"
         */
         return Courses::create([
-            "name" => data['name'],
-            "credits" => data['credits'], 
-            "mhours" => (int)data['mhours'], //magistral hours
-            "ihours" => (int)data['ihours'], //independent hours
-            "ctype" =>  (int)data['ctype'],  //course type
-            "precourses" => data['precourses'],        //listado de cursos previos 
-            "valuable" => (bool)data['valuable'],    //
-            "qualifiable" => (bool)data['qualifiable'], //
-            "p_academico" => (int)data['p_academico'],
-            "semester" => (int)data['semester']
+            "name" => $data['name'],
+            "credits" => $data['credits'], 
+            "mhours" => (int)$data['mhours'], //magistral hours
+            "ihours" => (int)$data['ihours'], //independent hours
+            "ctype" =>  (int)$data['ctype'],  //course type
+            "precourses" => $data['precourses'],        //listado de cursos previos 
+            "valuable" => (bool)$data['valuable'],    //
+            "qualifiable" => (bool)$data['qualifiable'], //
+            "p_academico" => (int)$data['p_academico'],
+            "semester" => (int)$data['semester'],
+            "created_by" => (int)$data['created_by']
         ]);
     }
     
     private function edit(array $data,$id){
         $course = Courses::find($id);
-        $course->name = data['name'];
-        $course->credits = data[''];
-        $course->mhours = data[''];
-        $course->ihours = data['ihours'];
-        $course->ctype = data['ctype'];
-        $course->precourses = data['precourses'];
-        $course->valuable = data['valuable'];
-        $course->qualifiable = data['qualifiable'];
+        $course->name = $data['name'];
+        $course->credits = $data['credits'];
+        $course->mhours = $data['mhours'];
+        $course->ihours = $data['ihour'];
+        $course->ctype = $data['ctype'];
+        $course->precourses = $data['precourses'];
+        $course->valuable = $data['valuable'];
+        $course->qualifiable = $data['qualifiable'];        
         return $course->save();
     }
 
     public static function allCourses(){
         return Courses::all();
+    }
+
+    public static function allTeacherCourses(){
+        return Courses::where('created_by',Auth::user()->id)->paginate(10);        
     }
 
     public static function paginateCourses(){
@@ -98,13 +104,15 @@ class CoursesController extends Controller
             }
             if ($user->role == 2 or $user->role==3)
                 return view('forms.CRUD.edit')
-                            ->withMaster([
-                                'title'=>'Cursos',
-                                'option'=>'update',
-                                'model'=>'Course',
-                                'fields'=>'courses',
-                                'object'=>'course'
-                            ])->withData($course)->withPrograms(AcademicProgramsController::allPrograms());
+            ->withMaster([
+                'title'=>'Cursos',
+                'option'=>'update',
+                'model'=>'Course',
+                'fields'=>'courses',
+                'object'=>'course'
+            ])
+            ->withData($course)
+            ->withPrograms(AcademicProgramsController::allPrograms());
             else
                 return redirect('/home/consultar');
         }
@@ -112,14 +120,58 @@ class CoursesController extends Controller
 
     //POST
     public function create(Request $request){
-        //dd($request->all());
-        $data = $request->all();
-        $this->validator($data,$this->rules)->validate();
+        dd($request->all());
+        if(Auth::user()->role == 1){
+            $data = $request->all();
+
+            $credits = $data['credits'];
+            $mhours = $data['mhours'];
+            $ihours = $data['ihours'];
+
+            $weekHours = $credits*3;
+            if($mhours+$ihours != $weekHours or $mhours>$ihours){
+                return redirect()->back()->withErrors(new MessageBag([
+                    'weekHours'=>'Las horas magistrales y semanales deben sumar: '.$weekHours.'<br>Nota: Las horas magistrales deben ser menor a las horas de trabajo individual'
+                ]))->with(['_old_input'=>$data]);
+            }
+
+            $this->validator($data,$this->rules)->validate();
+
+            if($this->store($data)){
+                alert()->success("Exito!","El Curso ha sido registrado");
+                return redirect()->back();
+            }
+        }
+        alert()->error("Error!","Un inconveniente ha ocurrido");
         return redirect()->back();
     }
 
     public function update(Request $request){
-        dd($request->all());
+        $role= Auth::user()->role;
+        if($role==1 or $role==2){
+            $data = $request->all();
+
+            $credits = $data['credits'];
+            $mhours = $data['mhours'];
+            $ihours = $data['ihours'];
+
+            $weekHours = $credits*3;
+            if($mhours+$ihours != $weekHours or $mhours>$ihours){
+                return redirect()->back()->withErrors(new MessageBag([
+                    'weekHours'=>'Las horas magistrales y semanales deben sumar: '.$weekHours.'<br>Nota: Las horas magistrales deben ser menor a las horas de trabajo individual'
+                ]))->with(['_old_input'=>$data]);
+            }
+
+            $this->validator($data,$this->rules)->validate();
+            $id = $data['id'];
+
+            if($this->edit($data,$id)){
+                alert()->success("Exito!","El curso ha sido modificado");
+                return redirect('/home/consultar');
+            }
+        }
+        alert()->error("Error!","Un inconveniente ha ocurrido");
+        return redirect()->back();
     }
 
     public function delete($id){

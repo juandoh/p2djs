@@ -13,7 +13,7 @@
 ?>
 
 @if(isset($course))
-    {!! Form::hidden('id', $course->id) !!}    
+    {!! Form::hidden('id', $course->creator->id) !!}
 @endif
 
 <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }}">    
@@ -22,24 +22,29 @@
     {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'name')}}
 </div>
 
-<div class="form-group {{ $errors->has('credits') ? ' has-error' : '' }}">
-    {{ Form::label('credits', 'Creditos:', ['class' => 'control-label']) }}
-    {{ Form::number('credits',(isset($course) ? $course->credits:old('credits')),['class'=>'form-control','required'=>'','min'=>0,'max'=>20])  }}
-    {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'credits')}}
+<div class="row {{ $errors->has('weekHours') ? ' has-error' : '' }}">
+    <div class="form-group col-md-4 col-sm-4 {{ $errors->has('credits') ? ' has-error' : '' }}">
+        {{ Form::label('credits', 'Creditos:', ['class' => 'control-label']) }}
+        {{ Form::number('credits',(isset($course) ? $course->credits:old('credits')),['class'=>'form-control','required'=>'','min'=>0,'max'=>20])  }}
+        {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'credits')}}
+    </div>
+
+
+    <div class="form-group col-md-4 col-sm-4 {{ $errors->has('mhours') ? ' has-error' : '' }}">
+        {{ Form::label('mhours', 'Horas Magistrales:', ['class' => 'control-label']) }}
+        {{ Form::number('mhours',(isset($course) ? $course->mhours:old('mhours')),['class'=>'form-control','required'=>'','min'=>0,'max'=>20])  }}
+        {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'mhours')}}
+    </div>
+
+
+    <div class="form-group col-md-4 col-sm-4 {{ $errors->has('ihours') ? ' has-error' : '' }}">
+        {{ Form::label('ihours', 'Horas Individuales:', ['class' => 'control-label']) }}
+        {{ Form::number('ihours',(isset($course) ? $course->ihours:old('ihours')),['class'=>'form-control','required'=>'','min'=>0,'max'=>20])  }}
+        {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'ihours')}}
+    </div>
 </div>
-
-
-<div class="form-group {{ $errors->has('mhours') ? ' has-error' : '' }}">
-    {{ Form::label('mhours', 'Horas Magistrales:', ['class' => 'control-label']) }}
-    {{ Form::number('mhours',(isset($course) ? $course->mhours:old('mhours')),['class'=>'form-control','required'=>'','min'=>0,'max'=>20])  }}
-    {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'mhours')}}
-</div>
-
-
-<div class="form-group {{ $errors->has('ihours') ? ' has-error' : '' }}">
-    {{ Form::label('ihours', 'Horas de Trabajo Individual:', ['class' => 'control-label']) }}
-    {{ Form::number('ihours',(isset($course) ? $course->ihours:old('ihours')),['class'=>'form-control','required'=>'','min'=>0,'max'=>20])  }}
-    {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'ihours')}}
+<div class="form-group col-md-offset-1 {{ $errors->has('weekHours') ? ' has-error' : '' }}">    
+    {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'weekHours')}}    
 </div>
 
 <div class="form-group well {{ $errors->has('ctype') ? ' has-error' : '' }}">
@@ -66,29 +71,28 @@
 <div class="well">
     {{ Form::label('', 'Caracteristicas:', ['class' => 'control-label']) }}
     <br>
-    <div class="checkbox-inline">
+    <div class="checkbox">
+        {{ Form::label('valuable', 'Validable:', ['class' => 'control-label']) }}
         <label>
-        <input type="checkbox" class="" name="valuable" value="1" 
-            @if(isset($course)) 
-                @if($course->valuable) 
-                    checked
-                @endif
-            @endif>
-            Validable
-        </label>    
-    </div>
-    <div class="checkbox-inline">
+        {{ Form::radio('valuable', 1, true) }}
+            Si
+        </label>
         <label>
-        <input type="checkbox" class="" name="qualifiable" value="false"
-            @if(isset($course)) 
-                @if($course->qualifiable)
-                    checked
-                @endif
-            @endif
-        >
-        Habilitable
-        </label>    
-    </div>
+        {{ Form::radio('valuable',0) }}
+            No
+        </label>
+    </div>    
+    <div class="checkbox">
+        {{ Form::label('qualifiable', 'Habilitable:', ['class' => 'control-label']) }}
+        <label>
+        {{ Form::radio('qualifiable', 1, true) }}
+            Si
+        </label>
+        <label>
+        {{ Form::radio('qualifiable',0) }}
+            No
+        </label>
+    </div>    
 </div>
 <div class="form-group {{ $errors->has('precourses') ? ' has-error' : '' }}">
     {{ Form::label('precourses', 'Prerrequisitos (separados con comas)', ['class' => 'control-label']) }}

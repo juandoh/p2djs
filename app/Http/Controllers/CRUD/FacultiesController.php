@@ -20,6 +20,7 @@ class FacultiesController extends Controller
     private $messages=[
         'required'=>'Este campo es obligatorio',
         'name.unique'=>'Ya existe una facultad con ese nombre',
+        'detail.max'=>'La descripción no debe ser mayor a :max caracteres',
     ];
 
     protected function validator(array $data, $rules){
@@ -36,8 +37,8 @@ class FacultiesController extends Controller
     
     private function edit(array $data,$id){
         $faculty = Faculties::find($id);
-        $faculty->name = data['name'];
-        $faculty->detail = data['detail'];
+        $faculty->name = $data['name'];
+        $faculty->detail = $data['detail'];
         return $faculty->save();
     }
 
@@ -79,19 +80,37 @@ class FacultiesController extends Controller
     //POST
     public function create(Request $request){
         //dd($request->all());
-        $data = $request->all();
-        $this->validator($data,$this->rules)->validate();
-        
-        if($this->store($data)){
-            alert()->success("Exito!","Facultad registrada");
-        }else{
-            alert()->error("Error!","Un inconveniente ha ocurrido");
-        }        
+        if(Auth::user()->role == 0){
+            $data = $request->all();
+            $this->validator($data,$this->rules)->validate();
+
+            if($this->store($data)){
+                alert()->success("Exito!","La Facultad ha sido registrada");
+                return redirect()->back();
+            }
+        }
+        alert()->error("Error!","Un inconveniente ha ocurrido");
         return redirect()->back();
     }
 
     public function update(Request $request){
-        dd($request->all());
+        //dd($request->all());
+        if(Auth::user()->role == 0){
+            $rules=[
+                'name'=>'required|string|max:255|exists:faculties,name',
+                'detail'=>'required|string|max:255'
+            ];
+            $data = $request->all();
+            $this->validator($data,$rules)->validate();
+            $id = $data['id'];
+
+            if($this->edit($data,$id)){
+                alert()->success("Exito!","La Facultad ha sido modificada");
+                return redirect('/home/facultades');
+            }
+        }
+        alert()->error("Error!","Un inconveniente ha ocurrido");
+        return redirect()->back();
     }
 
     public function delete($id){
@@ -99,7 +118,7 @@ class FacultiesController extends Controller
         if(!is_null($id)){
             if(Auth::user()->role == 0){
                 if(Faculties::find($id)->delete()){
-                    alert()->success("Exito!","La facultad ha sido eliminada");
+                    alert()->success("Exito!","La Facultad ha sido eliminada");
                     return redirect('/home/facultades');
                 }else{
                     alert()->error("Error!","");                    
@@ -117,7 +136,7 @@ class FacultiesController extends Controller
                 $faculty = Faculties::onlyTrashed()->where('id',$id);
                 
                 if($faculty->restore()){
-                    alert()->success('Exito!','La facultad se ha restaurado');
+                    alert()->success('Exito!','La Facultad se ha restaurado');
                 }else{
                     alert()->error("Error!","Un inconveniente ha ocurrido");
                 }             

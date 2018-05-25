@@ -20,8 +20,8 @@
                 $testObj = (object)[
                     ];
             ?>
-
             
+            <div class="container-fluid col-md-offset-1 r-offset">
             {{ Form::open(['route'=>$route,'class'=>'form']) }}
                 @if(isset($data))
                     @include('fields.CRUD.'.$master['fields'],[$master['object']=>$data])
@@ -32,7 +32,7 @@
                     {{ Form::submit('Guardar',["class"=>"btn btn-primary form-control"]) }}
                 </div>
             {{ Form::close()}}
-            
+            </div>
         </div>
     </div>
     
