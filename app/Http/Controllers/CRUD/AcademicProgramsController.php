@@ -16,7 +16,7 @@ class AcademicProgramsController extends Controller
 
     //validator rules
     private $rules = [
-        'name'=>'required|string|unique:academic_programs',
+        'name'=>'required|string|unique:academic_programs|max:191',
         'school' => 'required|numeric|exists:schools,id',
         'semesters'=>'required|numeric|min:1',
         'credits'=> 'required|numeric|min:1',
@@ -90,19 +90,33 @@ class AcademicProgramsController extends Controller
     //REST FUNCTIONS
     public function create(Request $request){
         //dd($request->all());
-        $data = $request->all();
-        $this->validator($data,$this->rules)->validate();
+        if(Auth::user()->role == 3){
+            $data = $request->all();
+            $this->validator($data,$this->rules)->validate();
 
-        if($this->store($data)){
-            alert()->success("Exito!","Programa Académico registrado");
-        }else{
-            alert()->error("Error!","Un inconveniente ha ocurrido");
-        }        
+            if($this->store($data)){
+                alert()->success("Exito!","Programa Académico registrado");
+                return redirect()->back();
+            }
+        }   
+        alert()->error("Error!","Un inconveniente ha ocurrido");
         return redirect()->back();
     }
 
     public function update(Request $request){
-        dd($request->all());
+        if(Auth::user()->role == 3){
+            $data = $request->all();
+            $updateRules = $this->rules;
+            $updateRules['name']='required|string|max:255';
+            $this->validator($data,$updateRules)->validate();
+
+            if($this->edit($data)){
+                alert()->success("Exito!","El Programa Académico ha sido modificado");
+                return redirect()->back();
+            }
+        }   
+        alert()->error("Error!","Un inconveniente ha ocurrido");
+        return redirect()->back();
     }
 
     public function delete($id){

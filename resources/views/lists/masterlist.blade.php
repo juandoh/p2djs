@@ -31,8 +31,8 @@
                         @endif
                     @endforeach                    
                         {{-- listBtn uses $where--}}                        
-                        <th>
-                            @include('forms.listBtn',['id'=>$row['id'],'deleted'=>$row['deleted']])
+                        <th style="min-width:250px;">
+                            @include('forms.listBtn',['id'=>$row['id'],'deleted'=>$row['deleted']])                            
                         </th>
                 </tr>
                 @endforeach                

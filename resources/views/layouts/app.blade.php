@@ -17,7 +17,7 @@
             .r-offset {
                 margin-right: 8.33333%;
             }    
-        }        
+        }             
     </style>
 </head>
 <body>

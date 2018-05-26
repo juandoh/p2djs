@@ -13,7 +13,7 @@ class SchoolsController extends Controller
 {
     //Validation rules
     private $rules=[
-        'name'=>'required|string|max:255|unique:schools,name',
+        'name'=>'required|string|max:191|unique:schools,name',
         'faculty' =>'required|numeric|exists:faculties,id',
         'detail'=>'required|string|max:255'
     ];

@@ -15,17 +15,18 @@ class CoursesController extends Controller
 {
     //Validation rules
     private $rules=[
-        'name'=>'required|string|max:255|unique:courses',
-        'credits'=>'required|integer|min:1',
+        'name'=>'required|string|max:191|unique:courses',
+        'credits'=>'required|integer|min:2',
         'mhours'=>'required|integer|min:1',
         'ihours'=>'required|integer|min:1',
         'ctype'=>'required|integer|min:1|max:4',        
-        'precourses'=>'required|string|max:255',
+        'precourses'=>'required|string|max:191',
         'valuable'=>'boolean',
         'qualifiable'=>'boolean',
         'p_academico'=>'required|exists:academic_programs,id|min:1',
         'semester'=>'required|integer|min:1|max:20',
     ];
+
     //Validation messages
     private $messages=[
         'name.unique'=>'El nombre ya se encuentra registrado en la base de datos',
@@ -68,10 +69,12 @@ class CoursesController extends Controller
     
     private function edit(array $data,$id){
         $course = Courses::find($id);
+        //dd($course);
+        //dd(User::find($data['created_by']));
         $course->name = $data['name'];
         $course->credits = $data['credits'];
         $course->mhours = $data['mhours'];
-        $course->ihours = $data['ihour'];
+        $course->ihours = $data['ihours'];
         $course->ctype = $data['ctype'];
         $course->precourses = $data['precourses'];
         $course->valuable = $data['valuable'];
@@ -95,14 +98,14 @@ class CoursesController extends Controller
     //GET
     public function showEdit($id){
         if(!is_null($id)){
-            $user = Auth::user();
+            $role = Auth::user()->role;
             $course = Courses::find($id);
             //dd($program);
             if(!$course){
                 alert()->info('Información','El Curso no se puede modificar dada su inhabilidad ó simplemente no existe');
                 return redirect('/home/consultar');
             }
-            if ($user->role == 2 or $user->role==3)
+            if ($role == 1 or $role==2)
                 return view('forms.CRUD.edit')
             ->withMaster([
                 'title'=>'Cursos',
@@ -118,12 +121,51 @@ class CoursesController extends Controller
         }
     }
 
+    public function showInfo($id){
+        if(!is_null($id)){
+            $role = Auth::user()->role;
+            $course = Courses::find($id);
+            //dd($program);
+            if(!$course){
+                alert()->info('Información','El Curso no se encuentra disponible para visualizar');
+                return redirect('/home/consultar');
+            }
+            if ($role == 3)
+                return view('forms.CRUD.edit')
+            ->withMaster([
+                'title'=>'Cursos',
+                'option'=>'show',
+                'model'=>'Course',
+                'fields'=>'courses',
+                'object'=>'course'
+            ])
+            ->withData($course);            
+            else
+                return redirect('/home/consultar');
+        }
+    }
+
+    public function showDesigner($id){
+        if(!is_null($id)){
+            $role = Auth::user()->role;
+            if ($role == 1 or $role==2){                
+                $course = Courses::find($id);            
+                if(!$course){
+                    alert()->info('Información','El Curso no se puede modificar dada su inhabilidad, no existe, ó no lo tiene asignado');
+                }else{
+                    return view('forms.CourseDesign.design',['course'=>$course]);
+                }
+            }
+            return redirect('/home/consultar');
+        }
+    }
+
     //POST
     public function create(Request $request){
-        dd($request->all());
-        if(Auth::user()->role == 1){
+        //dd($request->all());
+        $role = Auth::user()->role;
+        if($role == 1 or $role == 2){
             $data = $request->all();
-
             $credits = $data['credits'];
             $mhours = $data['mhours'];
             $ihours = $data['ihours'];
@@ -131,7 +173,7 @@ class CoursesController extends Controller
             $weekHours = $credits*3;
             if($mhours+$ihours != $weekHours or $mhours>$ihours){
                 return redirect()->back()->withErrors(new MessageBag([
-                    'weekHours'=>'Las horas magistrales y semanales deben sumar: '.$weekHours.'<br>Nota: Las horas magistrales deben ser menor a las horas de trabajo individual'
+                    'weekHours'=>'Las horas magistrales e individuales deben sumar: '.$weekHours.'<br>Nota: Las horas magistrales deben ser menor a las horas de trabajo individual'
                 ]))->with(['_old_input'=>$data]);
             }
 
@@ -145,12 +187,11 @@ class CoursesController extends Controller
         alert()->error("Error!","Un inconveniente ha ocurrido");
         return redirect()->back();
     }
-
     public function update(Request $request){
         $role= Auth::user()->role;
         if($role==1 or $role==2){
             $data = $request->all();
-
+            //dd($data);
             $credits = $data['credits'];
             $mhours = $data['mhours'];
             $ihours = $data['ihours'];
@@ -162,24 +203,26 @@ class CoursesController extends Controller
                 ]))->with(['_old_input'=>$data]);
             }
 
-            $this->validator($data,$this->rules)->validate();
+            $updateRules = $this->rules;
+            $updateRules['name']='required|string|max:255|exists:courses,name';
+
+            $this->validator($data,$updateRules)->validate();
             $id = $data['id'];
 
             if($this->edit($data,$id)){
-                alert()->success("Exito!","El curso ha sido modificado");
+                alert()->success("Exito!","El Curso ha sido modificado");
                 return redirect('/home/consultar');
             }
         }
         alert()->error("Error!","Un inconveniente ha ocurrido");
         return redirect()->back();
     }
-
     public function delete($id){
         if(!is_null($id)){
             //dd(User::find($id)->trashed());
             if(Auth::user()->role != 3){
                 if(Courses::find($id)->delete()){
-                    alert()->success("Exito!","El curso ha sido eliminado");                    
+                    alert()->success("Exito!","El Curso ha sido eliminado");                    
                 }else{    
                     alert()->error("Error!","");                    
                 }

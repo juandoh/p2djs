@@ -13,8 +13,11 @@
 ?>
 
 @if(isset($course))
-    {!! Form::hidden('id', $course->creator->id) !!}
+    {!! Form::hidden('id', $course->id) !!}
+    {!! Form::hidden('created_by', $course->creator->id) !!}
 @endif
+
+
 
 <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }}">    
     {{ Form::label('name', 'Nombre del curso', ['class' => 'control-label']) }}
@@ -54,12 +57,19 @@
             <label>
                 @if(isset($course))
                     @if($course->ctype == (int)$val)
-                        {{ Form::radio('ctype',$val, ['checked'=>'']) }}
+                        {{ Form::radio('ctype',$val, true) }}
                     @else
                         {{ Form::radio('ctype',$val) }}
                     @endif
-                @else
-                    {{ Form::radio('ctype',$val) }}
+                @else                          
+                    @if (old('ctype')==(int)$val)
+                        {{ Form::radio('ctype',$val, true) }}
+                    @else
+                        {{ Form::radio('ctype',$val) }}
+                    @endif
+                    @if(is_null(old('ctype')))
+                        {{ Form::radio('ctype',$val, ((((int)$val)==1)?true:false)) }}
+                    @endif
                 @endif            
                 {{ $opt }}
             </label>
@@ -71,27 +81,33 @@
 <div class="well">
     {{ Form::label('', 'Caracteristicas:', ['class' => 'control-label']) }}
     <br>
-    <div class="checkbox">
-        {{ Form::label('valuable', 'Validable:', ['class' => 'control-label']) }}
-        <label>
-        {{ Form::radio('valuable', 1, true) }}
-            Si
-        </label>
-        <label>
-        {{ Form::radio('valuable',0) }}
-            No
-        </label>
-    </div>    
-    <div class="checkbox">
-        {{ Form::label('qualifiable', 'Habilitable:', ['class' => 'control-label']) }}
-        <label>
-        {{ Form::radio('qualifiable', 1, true) }}
-            Si
-        </label>
-        <label>
-        {{ Form::radio('qualifiable',0) }}
-            No
-        </label>
+    <div class="row">
+        {{ Form::label('valuable', 'Validable:', ['class' => 'control-label col-md-2']) }}
+        <div class="col-md-8">
+            <label class="radio-inline">
+            {{ Form::radio('valuable', 1, (isset($course)?(($course->valuable==1)?true:false):true)) }}
+                Si
+            </label>    
+            <label class="radio-inline">
+            {{ Form::radio('valuable',0, (isset($course)?(($course->valuable==0)?true:false):true)) }}
+                No
+            </label>
+        </div>          
+    </div> 
+    
+    
+    <div class="row">
+        {{ Form::label('qualifiable', 'Habilitable:', ['class' => 'control-label col-md-2']) }}
+        <div class="col-md-8">
+            <label class="radio-inline">
+            {{ Form::radio('qualifiable', 1, (isset($course)?(($course->qualifiable==1)?true:false):true)) }}
+                Si
+            </label>
+            <label class="radio-inline">
+            {{ Form::radio('qualifiable',0, (isset($course)?(($course->qualifiable==0)?true:false):true)) }}
+                No
+            </label>
+        </div>
     </div>    
 </div>
 <div class="form-group {{ $errors->has('precourses') ? ' has-error' : '' }}">

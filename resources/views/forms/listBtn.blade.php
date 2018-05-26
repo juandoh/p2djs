@@ -1,16 +1,38 @@
 @if(isset($where) and isset($id))
-<div class="btn-group btn-group-justified" style="max-width: 300px;min-width: 160px;">    
-    <a  class="btn btn-primary" href="{{ '/'.strtolower($where).'/'.$id  }}" >Editar</a>
-    @if($deleted)
-        <a class="btn btn-warning" onclick="$('#en{{$where.$id}}').submit()">Habilitar</a>
-        <form method="POST" action="{{ '/enable'.$where.'/'.$id }}" id="en{{ $where.$id }}" style="display: none;">
-            {{ csrf_field() }} 
-        </form>
+<?php if(!isset($deanCourseView)) $deanCourseView=false;?>
+
+    @if($deanCourseView)
+        <div class="btn-group">
+            <a class="btn btn-primary" href="{{ '/info/course/'.$id  }}" style="min-width:60px;">Ver Curso</a>
+        </div>
     @else
-        <a class="btn btn-danger" onclick="$('#del{{$where.$id}}').submit()">Eliminar</a>
-        <form method="POST" action="{{ '/delete'.$where.'/'.$id }}" id="del{{ $where.$id }}" style="display: none;">
-            {{ csrf_field() }} 
-        </form>
+    <div class="btn-group btn-group-justified" style="max-width: 200px;min-width:200px;">
+
+        <div class="btn-group">
+            <a class="btn btn-primary" href="{{ '/'.strtolower($where).'/'.$id  }}" style="min-width:60px;">Editar</a>
+        </div>
+        <?php if(!isset($courseDesign)) $courseDesign=false;?>
+        @if($courseDesign)     
+        <div class="btn-group">   
+            <a class="btn btn-warning" href="{{ '/design/course/'.$id  }}" style="min-width:140px;">Diseño del Curso</a>
+        </div>
+        @else
+            @if($deleted)
+                <div class="btn-group">   
+                    <form method="POST" action="{{ '/enable'.$where.'/'.$id }}" id="en{{ $where.$id }}" style="display: none;">
+                        {{ csrf_field() }} 
+                    </form>
+                    <button type="button" class="btn btn-warning" onclick="$('#en{{$where.$id}}').submit()">Habilitar</button>
+                </div>
+            @else
+                <div class="btn-group">   
+                    <form method="POST" action="{{ '/delete'.$where.'/'.$id }}" id="del{{ $where.$id }}" style="display: none;">
+                        {{ csrf_field() }} 
+                    </form>
+                    <button type="button" class="btn btn-danger" onclick="$('#del{{$where.$id}}').submit()">Eliminar</button>
+                </div>
+            @endif
+        @endif
+    </div>
     @endif
-</div>
 @endif

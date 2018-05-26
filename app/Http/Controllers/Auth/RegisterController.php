@@ -54,11 +54,11 @@ class RegisterController extends Controller
      */
 
     private $rules = [
-        'fullname' => 'required|string|max:255|min:10',
-        'shortname' => 'required|string|max:255|min:5|unique:users',
-        'email' => 'required|string|email|max:255|unique:users',
+        'fullname' => 'required|string|max:191|min:10',
+        'shortname' => 'required|string|max:191|min:5|unique:users',
+        'email' => 'required|string|email|max:191|unique:users',
         'password' => 'required|string|min:6|confirmed',
-        'role' => 'required'
+        'role' => 'required|min:1|max:3'
     ];
 
     private $messages = [
@@ -68,7 +68,7 @@ class RegisterController extends Controller
         'fullname.max' => "El nombre completo debe tener al menos :max caracteres",
         'shortname.max' => "El nombre corto debe tener al menos :max caracteres",        
         'email.unique' => 'El correo electronico ya se ha asignado',
-        'password.min' => "La contraseña debe tener al menos :min caracteres",
+        'password.min' => "La contraseña debe tener al menos :min caracteres",        
     ];
 
     protected function validator(array $data, $rules)
@@ -98,9 +98,9 @@ class RegisterController extends Controller
     }
 
     protected function update(array $data)
-    {
+    {        
         $user = User::find($data['id']);
-        
+        //dd($user);
         $user->fullname = $data['fullname'];
         $user->shortname = $data['shortname'];
         $user->email = $data['email'];
@@ -131,24 +131,26 @@ class RegisterController extends Controller
     public function updateUser(Request $request){
         $data = $request->all();
         //dd($data);        
-        $rules = [
-            'fullname' => 'required|string|max:255|min:10',
-            'shortname' => 'required|string|max:255|min:5',
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:6|confirmed',
-        ];
-
         if(Auth::user()->role == 0){
-            $rules['role'] = 'required';
-        }
+            $rules = [
+                'id'=>'exists:users,id',
+                'fullname' => 'required|string|max:255|min:10',
+                'shortname' => 'required|string|max:255|min:5',
+                'email' => 'required|string|email|max:255',
+                'password' => 'required|string|min:6|confirmed',
+            ];
 
-        $this->validator($data,$rules)->validate();
-        if($this->update($data)){
-            alert()->success("Exito!","Cambios guardados");
-        }else{
-            alert()->error("Error!","Un inconveniente ha ocurrido");
-        }
+            if(Auth::user()->role == 0){
+                $rules['role'] = 'required';
+            }
 
+            $this->validator($data,$rules)->validate();
+            if($this->update($data)){
+                alert()->success("Exito!","Cambios guardados");
+                return redirect()->back();
+            }
+        }
+        alert()->error("Error!","Un inconveniente ha ocurrido");
         return redirect()->back();
     }
 

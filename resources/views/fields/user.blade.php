@@ -4,6 +4,82 @@
 @if(isset($user))
     <input type="hidden" name="id" id="userid" value="{{ $user->id }}"/>
 @endif
+    @if(Auth::user()->role ==0)
+        <div class="form-group{{ $errors->has('role') ? ' has-error' : '' }}">
+            <label for="role" class="col-md-4 control-label">Rol del usuario</label>
+            <div class="col-md-6">
+                <ul class="nav nav-pills nav-justified">
+                    <li class="{{ (isset($userType)?($userType==='docente'?'active':''):'active') }}">
+                        <a href="
+                            @if(isset($editing))
+                                @if($editing)
+                                    {{ '/user/'.$user->id.'/docente' }}
+                                @endif
+                            @else
+                                {{ '/home/crear/docente' }}
+                            @endif
+                        ">
+                            Docente
+                        </a>
+                    </li>
+                    <li class="{{ (isset($userType)?($userType==='director'?'active':''):'') }}">
+                        <a href="
+                            @if(isset($editing))
+                                @if($editing)
+                                    {{ '/user/'.$user->id.'/director' }}
+                                @endif
+                            @else
+                                {{ '/home/crear/director' }}
+                            @endif
+                        ">
+                            Director
+                        </a>
+                    </li>
+                    <li class="{{ (isset($userType)?($userType==='decano'?'active':''):'') }}">
+                        <a href="
+                            @if(isset($editing))
+                                @if($editing)
+                                    {{ '/user/'.$user->id.'/decano' }}
+                                @endif
+                            @else
+                                {{ '/home/crear/decano' }}
+                            @endif
+                        ">Decano
+                        </a>
+                    </li>                    
+                </ul> 
+
+                @if(isset($user))
+                    {!! Form::hidden('role', $user->role, []) !!} 
+                @else
+                    @isset ($userType)
+                        @if ($userType==='docente')
+                            {!! Form::hidden('role', 1, []) !!} 
+                        @elseif ($userType==='director')
+                            {!! Form::hidden('role', 2, []) !!}
+                        @elseif ($userType==='decano')
+                            {!! Form::hidden('role', 3, []) !!}
+                        @else
+                            {!! Form::hidden('role', -1, []) !!}                            
+                        @endif
+                    @else
+                        {!! Form::hidden('role', -1, []) !!}
+                    @endisset
+                @endif
+                {{-- <a href="
+                        @if(isset($editing))
+                            @if($editing)
+                                {{ '/user/'.$user->id.'/decano' }}
+                            @endif
+                        @else
+                            {{ '/home/crear/decano' }}
+                        @endif
+                    ">Decano</a> --}}
+
+                {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'role')}}
+            </div>
+        </div>
+    @endif
     <div class="form-group {{ $errors->has('fullname') ? ' has-error' : '' }}" id="fnamegroup">    
         {{ Form::label('fullname', 'Nombre Completo', ['class' => 'control-label col-md-4',]) }}
         <div class="col-md-6">
@@ -73,60 +149,6 @@
                         Decano
                     @endif
                 </label>
-            </div>
-        </div>
-    @else    
-        <div class="form-group{{ $errors->has('role') ? ' has-error' : '' }}">
-            <label for="role" class="col-md-4 control-label">Rol del usuario</label>
-            <div class="col-md-6">
-                <div class="radio"><label>
-                    <input type="radio" name="role" value="1" 
-                        @if(isset($userType))
-                            @if($userType==='docente')
-                                {{ 'checked' }}
-                            @endif
-                        @endif
-                    >
-                    <a href="
-                        @if(isset($editing))
-                            @if($editing)
-                                {{ '/user/'.$user->id.'/docente' }}
-                            @endif
-                        @else
-                            {{ '/home/crear/docente' }}
-                        @endif
-                    ">Docente</a>
-                </label></div>
-                <div class="radio"><label>
-                    <input type="radio" name="role" value="2"
-                        {{ (isset($userType) ? (($userType==='director')?'checked':''):'') }}
-                    >
-                    <a href="
-                        @if(isset($editing))
-                            @if($editing)
-                                {{ '/user/'.$user->id.'/director' }}
-                            @endif
-                        @else
-                            {{ '/home/crear/director' }}
-                        @endif
-                    ">Director de Programa</a>
-                </label></div>
-                <div class="radio"><label>
-                    <input type="radio" name="role" value="3"
-                        {{ (isset($userType) ? (($userType==='decano')?'checked':''):'') }}
-                    >
-                    <a href="
-                        @if(isset($editing))
-                            @if($editing)
-                                {{ '/user/'.$user->id.'/decano' }}
-                            @endif
-                        @else
-                            {{ '/home/crear/decano' }}
-                        @endif
-                    ">Decano</a>
-                </label></div>
-
-                {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'role')}}
             </div>
         </div>
     @endif

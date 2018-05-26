@@ -47,11 +47,13 @@ class RootController extends Controller
             if(!is_null($tab))
                 if(!in_array($tab,$this->create))
                     return redirect()->back();
-            if (Auth::user()->role == 0)            
-                return view('forms.rootUserConfig',['user'=>User::find($id), 'userType'=>$tab,'editing'=>true]);
-            else
-                return redirect()->back();
+            if (Auth::user()->role == 0){
+                $user = User::find($id);
+                if(!is_null($user))
+                    return view('forms.rootUserConfig',['user'=>User::find($id), 'userType'=>$tab,'editing'=>true]);
+            }
         }
+        return redirect()->back();
     }
 
 }

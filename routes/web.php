@@ -14,6 +14,9 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::post('/', function () {
+    return redirect('/');
+})->name('dump');
 
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Auth\LoginController@login');
@@ -61,6 +64,10 @@ foreach($arr as $name=>$control){
     }
 }
 
+Route::get('/design/course/{id}','CRUD\CoursesController@showDesigner');
+Route::get('/info/course/{id}','CRUD\CoursesController@showInfo');
+
 //##########################################TEST################
 Route::get('/post','Testing\PostController@show')->name('post');
 Route::post('/post','Testing\PostController@store');
+Route::get('/post/input','Testing\PostController@input');

@@ -1,6 +1,7 @@
 @if(isset($master))
 <div class="panel-group">
     <div class="panel panel-success">
+        @if($master['option']!=='show')
         <div class="panel-heading">
                 @if($master['option']=='create')
                     <h4>Crear {{ $master['title'] }}:</h4>
@@ -8,30 +9,29 @@
                     <a onclick="window.history.back()" class="btn btn-success form-control">Volver</a>
                 @endif
         </div>
+        @endif
         <div class="panel-body">
-            @if($master['option']=='create')
+            @if($master['option']==='create')
                 <?php $route='create'.$master['model'] ?>
-            @elseif($master['option']=='update')
+            @elseif($master['option']==='update')
                 <?php $route='update'.$master['model'] ?>
+            @elseif($master['option']==='show')
+                <?php $route='dump' ?>
             @endif
-
-            <?php
-                //name, faculty, detail
-                $testObj = (object)[
-                    ];
-            ?>
             
             <div class="container-fluid col-md-offset-1 r-offset">
-            {{ Form::open(['route'=>$route,'class'=>'form']) }}
+            {{ (($master['option']==='show')? (Form::open(['route'=>$route,'class'=>'form'])):'') }}
                 @if(isset($data))
                     @include('fields.CRUD.'.$master['fields'],[$master['object']=>$data])
                 @else
                     @include('fields.CRUD.'.$master['fields'])
                 @endif
+                @if($master['option']!=='show')
                 <div class="form-group">
                     {{ Form::submit('Guardar',["class"=>"btn btn-primary form-control"]) }}
                 </div>
-            {{ Form::close()}}
+                @endif
+            {{ (($master['option']==='show')? (Form::close()):'')}}
             </div>
         </div>
     </div>

@@ -17,7 +17,7 @@ class CreateSchoolsTable extends Migration
             $table->increments('id');
             $table->integer('faculty')->unsigned()->index();
             $table->string('name')->unique();
-            $table->string('detail');
+            $table->mediumText('detail');
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('faculty')->references('id')->on('faculties');

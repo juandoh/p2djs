@@ -26,7 +26,9 @@ class DecanoController extends Controller
         }
 
         if($id === 'consultar')
-            return view("users.decanoHome",["tab"=>$id])->withCourses(CoursesController::paginateCourses());
+            return view("users.decanoHome",["tab"=>$id])
+        ->withCourses(CoursesController::paginateCourses())
+        ->with(['deanCourseView'=>true]);
         elseif($id === 'crear')
             return view("users.decanoHome",["tab"=>$id])->withSchools(SchoolsController::allSchools());
         elseif($id === 'programas')

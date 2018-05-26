@@ -28,47 +28,7 @@
                 @endif
                 @if($tab === 'programas')
                     <div id="home" class="tab-pane fade  in active  ">
-                        <div class="panel panel-primary">
-                                <div class="panel-heading">
-                                    <h4>Listado de Programas Academicos:</h4>
-                                    <input class="form-control" id="myInput" type="text" placeholder="Buscar..">
-                                    <script>
-                                        $(document).ready(function(){
-                                            $("#myInput").on("keyup", function() {
-                                            var value = $(this).val().toLowerCase();
-                                            $("#myTable tr").filter(function() {
-                                                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                                            });
-                                            });
-                                        });
-                                    </script>
-                                </div>                  
-                                <div class="panel-body">
-                                    <table class="table table-responsive table-hover">
-                                        <thead>
-                                            <th>Id</th>
-                                            <th>Nombre</th>
-                                            <th>Escuela</th>
-                                            <th>Opciones</th>
-                                        </thead>
-                                        @if(isset($programs))
-                                            <tbody id="myTable">                                                
-                                                @foreach($programs as $program)
-                                                    <tr>
-                                                        <th>{{$program->id}}</th>
-                                                        <th>{{$program->name}}</th>
-                                                        <th>{{ $program->fschool->name }}</th>
-                                                        <th>@include('forms.listBtn',['where'=>'Program','id'=>$program->id,'deleted'=>!is_null($program->deleted_at)])</th>
-                                                    </tr>                                                        
-                                                @endforeach
-                                            </tbody>                                                
-                                        @endif
-                                    </table>
-                                    @if(isset($users))
-                                    <center>{{ $users->links() }}</center>
-                                    @endif
-                                </div>
-                            </div>            
+                        @include('lists.programs')
                     </div>
                 @endif
                 @if($tab === 'crear')
