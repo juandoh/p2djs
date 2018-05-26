@@ -97,6 +97,7 @@ class CoursesController extends Controller
     //REST FUNCTIONS
     //GET
     public function showEdit($id){
+
         if(!is_null($id)){
             $role = Auth::user()->role;
             $course = Courses::find($id);
@@ -122,6 +123,7 @@ class CoursesController extends Controller
     }
 
     public function showInfo($id){
+        return '';///REPLACE WITH DESIGN VIEW
         if(!is_null($id)){
             $role = Auth::user()->role;
             $course = Courses::find($id);
