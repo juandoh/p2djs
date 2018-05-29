@@ -4,12 +4,14 @@ namespace App\Http\Controllers\CRUD;
 
 use Auth;
 use Alert;
+use Relations;
 use App\Courses;
 use App\AcademicPrograms;
 use Illuminate\Http\Request;
+use Illuminate\Support\MessageBag;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\MessageBag;
+use App\Http\Controllers\Auth\RegisterController;
 
 class CoursesController extends Controller
 {
@@ -20,10 +22,9 @@ class CoursesController extends Controller
         'mhours'=>'required|integer|min:1',
         'ihours'=>'required|integer|min:1',
         'ctype'=>'required|integer|min:1|max:4',        
-        'precourses'=>'required|string|max:191',
         'valuable'=>'boolean',
         'qualifiable'=>'boolean',
-        'p_academico'=>'required|exists:academic_programs,id|min:1',
+        'program_id'=>'required|exists:academic_programs,id|min:1',
         'semester'=>'required|integer|min:1|max:20',
     ];
 
@@ -38,48 +39,47 @@ class CoursesController extends Controller
         'ihours.min'=>'El numero de <strong>horas independientes</strong> debe ser minimo de :min',
         'ctype.min'=>'Tipo de curso incorrecto',
         'ctype.max'=>'Tipo de curso incorrecto',
-        'p_academico.exists'=>'El Programa Academico seleccionado no se encuentra en la base de datos',
-        'p_academico.min'=>'El Programa Academico seleccionado no se encuentra en la base de datos',
+        'program_id.exists'=>'El Programa Academico seleccionado no se encuentra en la base de datos',
+        'program_id.min'=>'El Programa Academico seleccionado no se encuentra en la base de datos',
     ];
 
     protected function validator(array $data, $rules){
         return Validator::make($data, $rules, $this->messages);
     }
-
     //Database
     private function store(array $data){
         /*
             "name", "credits", "mhours", "ihours", "ctype", 
-            "precourses", "valuable", "qualifiable" ,"p_academico"
+            "precourses", "valuable", "qualifiable" ,"program_id"
         */
         return Courses::create([
             "name" => $data['name'],
             "credits" => $data['credits'], 
             "mhours" => (int)$data['mhours'], //magistral hours
             "ihours" => (int)$data['ihours'], //independent hours
-            "ctype" =>  (int)$data['ctype'],  //course type
-            "precourses" => $data['precourses'],        //listado de cursos previos 
+            "ctype" =>  (int)$data['ctype'],  //course type            
             "valuable" => (bool)$data['valuable'],    //
             "qualifiable" => (bool)$data['qualifiable'], //
-            "p_academico" => (int)$data['p_academico'],
+            "program_id" => (int)$data['program_id'],
             "semester" => (int)$data['semester'],
             "created_by" => (int)$data['created_by']
         ]);
     }
-    
     private function edit(array $data,$id){
         $course = Courses::find($id);
         //dd($course);
         //dd(User::find($data['created_by']));
-        $course->name = $data['name'];
-        $course->credits = $data['credits'];
-        $course->mhours = $data['mhours'];
-        $course->ihours = $data['ihours'];
-        $course->ctype = $data['ctype'];
-        $course->precourses = $data['precourses'];
-        $course->valuable = $data['valuable'];
-        $course->qualifiable = $data['qualifiable'];        
-        return $course->save();
+        if($course){
+            $course->name = $data['name'];
+            $course->credits = $data['credits'];
+            $course->mhours = $data['mhours'];
+            $course->ihours = $data['ihours'];
+            $course->ctype = $data['ctype'];            
+            $course->valuable = $data['valuable'];
+            $course->qualifiable = $data['qualifiable'];        
+            return $course->save();
+        }
+        return false;
     }
 
     public static function allCourses(){
@@ -87,7 +87,7 @@ class CoursesController extends Controller
     }
 
     public static function allTeacherCourses(){
-        return Courses::where('created_by',Auth::user()->id)->paginate(10);        
+        return Courses::where('created_by',Auth::id())->paginate(10);        
     }
 
     public static function paginateCourses(){
@@ -97,16 +97,14 @@ class CoursesController extends Controller
     //REST FUNCTIONS
     //GET
     public function showEdit($id){
-
-        if(!is_null($id)){
-            $role = Auth::user()->role;
+        if(!is_null($id)){            
             $course = Courses::find($id);
             //dd($program);
             if(!$course){
                 alert()->info('Información','El Curso no se puede modificar dada su inhabilidad ó simplemente no existe');
                 return redirect('/home/consultar');
             }
-            if ($role == 1 or $role==2)
+            if (Relations::isProgramBinded(Auth::id()))
                 return view('forms.CRUD.edit')
             ->withMaster([
                 'title'=>'Cursos',
@@ -116,23 +114,25 @@ class CoursesController extends Controller
                 'object'=>'course'
             ])
             ->withData($course)
-            ->withPrograms(AcademicProgramsController::allPrograms());
+            ->withPrograms(AcademicProgramsController::allPrograms())
+            ->withAvailableCourses(CoursesController::allCourses());
             else
                 return redirect('/home/consultar');
         }
     }
 
     public function showInfo($id){
-        return '';///REPLACE WITH DESIGN VIEW
+        //return '';///REPLACE WITH DESIGN VIEW ONLY, NOT DESIGN EDIT
         if(!is_null($id)){
-            $role = Auth::user()->role;
+            //dd($role);
             $course = Courses::find($id);
             //dd($program);
             if(!$course){
                 alert()->info('Información','El Curso no se encuentra disponible para visualizar');
                 return redirect('/home/consultar');
             }
-            if ($role == 3)
+            $role = Relations::resolveRole(Auth::id());
+            if ($role == 2 or $role == 3)
                 return view('forms.CRUD.edit')
             ->withMaster([
                 'title'=>'Cursos',
@@ -148,10 +148,9 @@ class CoursesController extends Controller
     }
 
     public function showDesigner($id){
-        if(!is_null($id)){
-            $role = Auth::user()->role;
-            if ($role == 1 or $role==2){                
-                $course = Courses::find($id);            
+        if(!is_null($id)){            
+            if (Relations::isTeacher(Auth::id())) {
+                $course = Courses::find($id);
                 if(!$course){
                     alert()->info('Información','El Curso no se puede modificar dada su inhabilidad, no existe, ó no lo tiene asignado');
                 }else{
@@ -165,7 +164,8 @@ class CoursesController extends Controller
     //POST
     public function create(Request $request){
         //dd($request->all());
-        $role = Auth::user()->role;
+
+        $role = Relations::resolveRole(Auth::id());
         if($role == 1 or $role == 2){
             $data = $request->all();
             $credits = $data['credits'];
@@ -189,8 +189,9 @@ class CoursesController extends Controller
         alert()->error("Error!","Un inconveniente ha ocurrido");
         return redirect()->back();
     }
+
     public function update(Request $request){
-        $role= Auth::user()->role;
+        $role= Relations::resolveRole(Auth::id());
         if($role==1 or $role==2){
             $data = $request->all();
             //dd($data);
@@ -219,19 +220,23 @@ class CoursesController extends Controller
         alert()->error("Error!","Un inconveniente ha ocurrido");
         return redirect()->back();
     }
+
     public function delete($id){
+        //dd($id);
         if(!is_null($id)){
             //dd(User::find($id)->trashed());
-            if(Auth::user()->role != 3){
+            if(Relations::isProgramBinded(Auth::id())){
                 if(Courses::find($id)->delete()){
                     alert()->success("Exito!","El Curso ha sido eliminado");                    
+                    return redirect("/home/consultar");
                 }else{    
-                    alert()->error("Error!","");                    
+                    alert()->error("Error!","El Curso no pudo eliminarse");               
+                    return redirect("/home/consultar");
                 }
             }else{
                 alert()->error("Error","Su cuenta no tiene el rol permitido para ejecutar esta acción");
             }
         }
-        return redirect()->back();
+        return redirect("/home/consultar");
     }
 }

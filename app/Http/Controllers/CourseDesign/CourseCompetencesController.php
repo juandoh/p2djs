@@ -26,17 +26,17 @@ class CourseCompetencesController extends Controller
     private function store(array $data){
         //id,course,name,detail
         return CourseCompetences::create([
-            'course'=>data['course'],
-            'name'=>data['name'],
-            'detail'=>data['detail']
+            'course'=>(int)$data['course'],
+            'name'=>$data['name'],
+            'detail'=>$data['detail']
         ]);
     }
     
     private function edit(array $data, $id){
         $competence = CourseCompetences::find($id);
-        $competence->course=data['course'];
-        $competence->name=data['name'];
-        $competence->detail=data['detail'];
+        $competence->course=$data['course'];
+        $competence->name=$data['name'];
+        $competence->detail=$data['detail'];
 
         return $competence->save();
     }
@@ -45,8 +45,8 @@ class CourseCompetencesController extends Controller
         return CourseCompetences::destroy($id);
     }
 
-    public static function listCompetences(){
-        return CourseCompetences::all();
+    public static function listCompetences($course_id){
+        return CourseCompetences::where('course_id',$course_id);
     }
 
     //REST FUNCTIONS

@@ -4,10 +4,12 @@ namespace App\Http\Controllers\CRUD;
 
 use Auth;
 use Alert;
+use Relations;
 use App\Schools;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Auth\RegisterController;
 
 class SchoolsController extends Controller
 {
@@ -39,9 +41,12 @@ class SchoolsController extends Controller
     
     private function edit(array $data,$id){
         $school = Schools::find($id);
-        $school->name = $data['name'];
-        $school->detail = $data['detail'];
-        return $school->save();
+        if($school){
+            $school->name = $data['name'];
+            $school->detail = $data['detail'];
+            return $school->save();
+        }
+        return false;
     }
 
     public static function allSchools(){
@@ -49,7 +54,7 @@ class SchoolsController extends Controller
     }
 
     public static function paginateSchools(){
-        if(Auth::user()->role==0)
+        if(Relations::isAdmin(Auth::id()))
             return Schools::withTrashed()->paginate(10);
         return Schools::paginate(10);
     }
@@ -58,14 +63,13 @@ class SchoolsController extends Controller
     //GET
     public function showEdit($id){
         if(!is_null($id)){
-            $user = Auth::user();
             $school = Schools::find($id);
             //dd($program);
             if(!$school){
                 alert()->info('Información','La Escuela no se puede modificar dada su inhabilidad ó simplemente no existe');
                 return redirect()->back();
             }
-            if ($user->role == 0)
+            if (Relations::isAdmin(Auth::id()))
                 return view('forms.CRUD.edit')
                             ->withMaster([
                                 'title'=>'Escuela',
@@ -82,7 +86,7 @@ class SchoolsController extends Controller
     //POST
     public function create(Request $request){
         //dd($request->all());
-        if(Auth::user()->role == 0){
+        if(Relations::isAdmin(Auth::id())){
             $data = $request->all();
             $this->validator($data,$this->rules)->validate();
 
@@ -97,7 +101,7 @@ class SchoolsController extends Controller
 
     public function update(Request $request){
         //dd($request->all());
-        if(Auth::user()->role == 0){
+        if(Relations::isAdmin(Auth::id())){
             $rules=[
                 'name'=>'required|string|max:255|exists:schools,name',
                 'detail'=>'required|string|max:255'
@@ -117,11 +121,11 @@ class SchoolsController extends Controller
 
     public function delete($id){
         if(!is_null($id)){
-            if(Auth::user()->role == 0){
+            if(Relations::isAdmin(Auth::id())){
                 if(Schools::find($id)->delete()){
                     alert()->success("Exito!","La Escuela ha sido eliminada");
                 }else{
-                    alert()->error("Error!","");                    
+                    alert()->error("Error!","La Escuela no pudo eliminarse");                    
                 }
             }else{
                 alert()->error("Error","Su cuenta no tiene el rol permitido para ejecutar esta acción");
@@ -132,7 +136,7 @@ class SchoolsController extends Controller
 
     public function enable($id = null){
         if(!is_null($id)){
-            if(Auth::user()->role == 0){
+            if(Relations::isAdmin(Auth::id())){
                 $school = Schools::onlyTrashed()->where('id',$id);
                 
                 if($school->restore()){

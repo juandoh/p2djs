@@ -41,6 +41,12 @@
                 @if($tab === 'programa')
                     <div id="menu2" class="tab-pane fade  in active">
                         {{--@include('forms.userConfig', ['user'=>Auth::user()])--}}
+                        @include('forms.CRUD.master',
+                                ['master'=>
+                                    ['title'=>'Programa Académico Asignado',
+                                    'option'=>'update',
+                                    'model'=>'Program',
+                                    'fields'=>'programs']])
                     </div>
                 @endif
                 @if($tab === 'configuracion')

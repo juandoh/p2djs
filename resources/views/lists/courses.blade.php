@@ -9,7 +9,7 @@
     $what='Cursos';
     $where = 'Course';
     $courseDesign=true;
-    $links = $courses->links();    
+    $links = $courses->links();
 ?>
     @include('lists.masterlist')
 @endif

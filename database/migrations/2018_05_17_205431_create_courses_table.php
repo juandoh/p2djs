@@ -14,21 +14,20 @@ class CreateCoursesTable extends Migration
     public function up()
     {
         Schema::create('courses', function (Blueprint $table) {
-            //"name", "credits", "mhours", "ihours", "ctype", "precourses", "valuable", "qualifiable" ,"p_academico"
+            //"name", "credits", "mhours", "ihours", "ctype", "precourses", "valuable", "qualifiable" ,"program_id"
             $table->increments('id');
             $table->string('name');
             $table->smallInteger('credits');
             $table->smallInteger('mhours');
             $table->smallInteger('ihours');
-            $table->smallInteger('ctype');
-            $table->string('precourses');
+            $table->smallInteger('ctype');            
             $table->boolean('valuable')->default(1);
             $table->boolean('qualifiable')->default(1);            
-            $table->integer('p_academico')->unsigned()->index();
+            $table->integer('program_id')->unsigned()->index();
             $table->smallInteger('semester');
             $table->integer('created_by')->unsigned()->index();
             $table->timestamps();
-            $table->foreign('p_academico')
+            $table->foreign('program_id')
                     ->references('id')
                     ->on('academic_programs');
             $table->foreign('created_by')

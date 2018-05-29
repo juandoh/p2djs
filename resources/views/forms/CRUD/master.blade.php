@@ -5,33 +5,50 @@
         <div class="panel-heading">
                 @if($master['option']=='create')
                     <h4>Crear {{ $master['title'] }}:</h4>
-                @elseif($master['option']=='update')
-                    <a onclick="window.history.back()" class="btn btn-success form-control">Volver</a>
+                @elseif($master['option']=='update')                    
+                    <div class="row">
+                        <div class="col-md-9 col-sm-9">
+                            <h4>Modificar {{ $master['title'] }}:</h4>
+                        </div>                        
+                        <div class="col-md-3 col-sm-3">
+                            <a style="min-width: 90px;" onclick="window.history.back()" class="btn btn-success form-control">Volver</a> 
+                        </div>
+                    </div>                    
                 @endif
         </div>
         @endif
         <div class="panel-body">
-            @if($master['option']==='create')
-                <?php $route='create'.$master['model'] ?>
+            @if($master['option']==='register')
+                @php
+                    $route=route('register');
+                @endphp            
+            @elseif($master['option']==='create')
+                @php
+                    $route='create'.$master['model'];
+                @endphp                
             @elseif($master['option']==='update')
-                <?php $route='update'.$master['model'] ?>
+                @php
+                    $route='update'.$master['model'];    
+                @endphp                
             @elseif($master['option']==='show')
-                <?php $route='dump' ?>
+                @php
+                    $route='dump';
+                @endphp                
             @endif
             
             <div class="container-fluid col-md-offset-1 r-offset">
-            {{ (($master['option']==='show')? (Form::open(['route'=>$route,'class'=>'form'])):'') }}
+            {{ (($master['option']!=='show')? (Form::open(['route'=>$route,'class'=>'form'])):'') }}
                 @if(isset($data))
                     @include('fields.CRUD.'.$master['fields'],[$master['object']=>$data])
                 @else
                     @include('fields.CRUD.'.$master['fields'])
                 @endif
                 @if($master['option']!=='show')
-                <div class="form-group">
-                    {{ Form::submit('Guardar',["class"=>"btn btn-primary form-control"]) }}
-                </div>
+                    <div class="form-group">
+                        {{ Form::submit('Guardar',["class"=>"btn btn-primary form-control"]) }}
+                    </div>
                 @endif
-            {{ (($master['option']==='show')? (Form::close()):'')}}
+            {{ (($master['option']!=='show')? (Form::close()):'')}}
             </div>
         </div>
     </div>
@@ -43,10 +60,10 @@
             </div>
             <div class="panel-body">
                 <div class="form-group">
-                    <form method="POST" action="{{ '/delete'.$master['model'].'/'.$data->id }}" id="delete">
+                    <form method="POST" action="{{ '/delete'.$master['model'].'/'.$data->id }}" id="delete" style="display: none;">
                         {{ csrf_field() }}            
                     </form>
-                    <button value="Eliminar" id="submit" class="btn btn-danger form-control" >
+                    <button value="Eliminar" id="submit" class="btn btn-danger form-control" >                        
                             Eliminar
                     </button>
                 </div>
@@ -62,6 +79,7 @@
                                 cancelButtonColor: '#d33',
                                 confirmButtonText: 'Eliminar'
                             }).then((result) => {
+                                console.log(result);
                                 if (result.value) {
                                     $("#delete").submit();
                                 }
@@ -75,3 +93,4 @@
 </div>
 
 @endif
+

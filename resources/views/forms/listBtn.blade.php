@@ -8,14 +8,22 @@
         </div>
     @else
     <div class="btn-group btn-group-justified" style="max-width: 200px;min-width:200px;">
-        <div class="btn-group">
-            <a class="btn btn-primary" href="{{ '/'.strtolower($where).'/'.$id  }}" style="min-width:60px;">Editar</a>
-        </div>        
+        @isset ($userTypeTab)
+            <div class="btn-group">
+                <a class="btn btn-primary" href="{{ '/'.strtolower($where).'/'.$id .'/'.strtolower($userTypeTab) }}" style="min-width:60px;">Editar</a>
+            </div>        
+        @else
+            <div class="btn-group">
+                <a class="btn btn-primary" href="{{ '/'.strtolower($where).'/'.$id  }}" style="min-width:60px;">Editar</a>
+            </div>            
+        @endisset
+        
         @if($directorCourseView)
             <div class="btn-group">
                 <a class="btn btn-warning" href="{{ '/info/course/'.$id  }}" style="min-width:60px;">Ver Diseño</a>
             </div>
         @endif
+        
         @if(!$directorCourseView)
         @if($courseDesign)
             <div class="btn-group">   

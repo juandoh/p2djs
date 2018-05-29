@@ -12,12 +12,14 @@
             @endif
 
             @if(isset($tab))
-                <?php $tabs=[
-                    'consultar'=>'Consultar Cursos',
-                    'crear'=>'Crear Cursos',
-                    'configuracion'=>'Configuración'
-                ];?>
-                @include('users.homeTabs')             
+                @php
+                    $tabs=[
+                        'consultar'=>'Consultar Cursos',
+                        'crear'=>'Crear Cursos',
+                        'configuracion'=>'Configuración'
+                    ];
+                @endphp                
+                @include('users.homeTabs')
             @endif                    
             
             <div class="tab-content">

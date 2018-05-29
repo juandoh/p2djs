@@ -1,23 +1,33 @@
-<?php 
+@php
     $options = [
         '1'=>'Asignatura Basica',
         '2'=>'Asignatura profesional',
         '3'=>'Electiva complementaria',
         '4'=>'Electiva profesional'
     ];
-    $programs = App\Http\Controllers\CRUD\AcademicProgramsController::allPrograms();
-    $programOpt = array();
-    foreach($programs as $program){
-        $programOpt += array($program->id => $program->name);
-    }
-?>
+    //$availableCourses = App\Http\Controllers\CRUD\CoursesController::allCourses();
+    //$userRole =  Role::resolveRole(Auth::id()); 
+@endphp
+
+<div style="display: none;" id="precourseSelector">
+    @isset ($availableCourses)
+        @php
+            $precoursesOptions = array();
+            foreach($availableCourses as $elem){
+                $precoursesOptions[$elem->id]=$elem->name;
+            }
+            echo "<script>var precoursesOptions=".json_encode($precoursesOptions).";</script>";
+            unset($precoursesOptions);
+        @endphp
+    @endisset
+</div>
 
 @if(isset($course))
     {!! Form::hidden('id', $course->id) !!}
     {!! Form::hidden('created_by', $course->creator->id) !!}
+@else
+    {!! Form::hidden('created_by', Auth::id()) !!}
 @endif
-
-
 
 <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }}">    
     {{ Form::label('name', 'Nombre del curso', ['class' => 'control-label']) }}
@@ -32,13 +42,11 @@
         {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'credits')}}
     </div>
 
-
     <div class="form-group col-md-4 col-sm-4 {{ $errors->has('mhours') ? ' has-error' : '' }}">
         {{ Form::label('mhours', 'Horas Magistrales:', ['class' => 'control-label']) }}
         {{ Form::number('mhours',(isset($course) ? $course->mhours:old('mhours')),['class'=>'form-control','required'=>'','min'=>0,'max'=>20])  }}
         {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'mhours')}}
     </div>
-
 
     <div class="form-group col-md-4 col-sm-4 {{ $errors->has('ihours') ? ' has-error' : '' }}">
         {{ Form::label('ihours', 'Horas Individuales:', ['class' => 'control-label']) }}
@@ -46,6 +54,7 @@
         {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'ihours')}}
     </div>
 </div>
+
 <div class="form-group col-md-offset-1 {{ $errors->has('weekHours') ? ' has-error' : '' }}">    
     {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'weekHours')}}    
 </div>
@@ -94,8 +103,6 @@
             </label>
         </div>          
     </div> 
-    
-    
     <div class="row">
         {{ Form::label('qualifiable', 'Habilitable:', ['class' => 'control-label col-md-2']) }}
         <div class="col-md-8">
@@ -110,23 +117,53 @@
         </div>
     </div>    
 </div>
-<div class="form-group {{ $errors->has('precourses') ? ' has-error' : '' }}">
-    {{ Form::label('precourses', 'Prerrequisitos (separados con comas)', ['class' => 'control-label']) }}
-    {{ Form::text('precourses',(isset($course) ? $course->precourses:old('precourses')),['class'=>'form-control','required'=>''])  }}
-    {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'precourses')}}
-</div>
-<div class="form-group {{ $errors->has('p_academico') ? ' has-error' : '' }}">
-    {{ Form::label('p_academico', 'Seleccione un Programa Academico', ['class' => 'control-label']) }}            
-    {{ Form::select('p_academico',
-                    ['-1'=>'']+$programOpt,
-                    (isset($course) ? $course->p_academico:old('p_academico')),
-                    ['class'=>'form-control','required'=>''])  }}
 
-    {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'p_academico')}}
+<div class="well">
+    <div class="row" id="precourses">        
+    </div>
+    <label> Agregar Precurso</label>
+    <label class="form-control" class="btn btn-info" id="addPrecourse">
+        <center>
+            <span class="glyphicon glyphicon-plus"></span>
+        </center>
+    </label>
 </div>
+
+<script type="text/javascript">
+    var precourseCount = 1;
+    $(document).ready(function() {
+        $("#addPrecourse").click(function(){
+            var selector = $("#precourseSelector").html();            
+            swal({
+              title: '<h3>Seleccione un curso prerrequisito</h3>',
+              type:'info',
+              input: 'select',
+              inputClass:'form-control',
+              inputOptions: precoursesOptions,
+              inputPlaceholder: '',
+              showCancelButton: true,              
+            }).then(function (result) {                
+                if(result.value){
+                    console.log(result);
+                    var html = `<div class="col-md-12">
+                                    <label>Precurso ${precourseCount}</label>
+                                    <input type="hidden" name="precourse_id_${precourseCount}" value="${result.value}">
+                                    <label class="control-label form-control">${precoursesOptions[result.value]}</label>
+                                </div>`;
+                    $("#precourses").append(html);
+                }
+            });
+        });
+    });
+</script>
+
+<div class="well">
+    @include('fields.CRUD.programSelector')    
+</div>
+
+
 <div class="form-group">
     {{ Form::label('semester', 'Semestre al que pertenece:', ['class' => 'control-label']) }}
     {{ Form::number('semester',(isset($course) ? $course->semester:old('semester')),['class'=>'form-control','required'=>'','min'=>0,'max'=>20])  }}
     {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'semester')}}
 </div>
-

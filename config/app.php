@@ -229,6 +229,7 @@ return [
         'Alert' => RealRashid\SweetAlert\Facades\Alert::class,
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
+        'Relations' => App\Http\Controllers\Relations\RelationsFacade::class,
     ],
 
 ];

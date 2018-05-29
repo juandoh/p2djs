@@ -16,9 +16,11 @@ class CreateUserAcademicProgramRelationsTable extends Migration
         Schema::create('user_academic_program_relations', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned()->index()->unique();
-            $table->integer('role')
+            $table->integer('role');
+            $table->integer('program_id')->unsigned()->index();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('program_id')->references('id')->on('academic_programs');
         });
     }
 

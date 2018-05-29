@@ -20,6 +20,8 @@ class DocenteController extends Controller
             return view("users.docenteHome")
                     ->withTab($id) 
                     ->withCourses(CoursesController::allTeacherCourses());
+        }elseif($id==='crear'){
+            return view("users.docenteHome")->withTab($id)->withAvailableCourses(CoursesController::allCourses());
         }
         
         return view("users.docenteHome")->withTab($id);

@@ -32,7 +32,11 @@
                     @endforeach                    
                         {{-- listBtn uses $where--}}                        
                         <th style="min-width:250px;">
-                            @include('forms.listBtn',['id'=>$row['id'],'deleted'=>$row['deleted']])                            
+                            @if ($where==='User')
+                                @include('forms.listBtn',['id'=>$row['id'],'deleted'=>$row['deleted'],'userTypeTab'=>$row['role']])
+                            @else
+                                @include('forms.listBtn',['id'=>$row['id'],'deleted'=>$row['deleted']])
+                            @endif                            
                         </th>
                 </tr>
                 @endforeach                

@@ -16,9 +16,11 @@ class CreateUserFacultyRelationsTable extends Migration
         Schema::create('user_faculty_relations', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned()->index()->unique();
-            $table->integer('role')
+            $table->integer('role');
+            $table->integer('faculty_id')->unsigned()->index()->unique();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('faculty_id')->references('id')->on('faculties');
         });
     }
 

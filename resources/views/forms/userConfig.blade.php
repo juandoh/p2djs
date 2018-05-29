@@ -5,7 +5,7 @@
         </div>
         <div class="panel-body">            
             <form class="form-horizontal" method="POST" action="{{ route('updateUser') }}">
-                @include('fields.user')
+                @include('fields.CRUD.user')
                 <div class="form-group">
                     <div class="col-md-6 col-md-offset-4">
                         <input type="submit" value="Guardar Cambios" class="btn btn-info form-control"/>

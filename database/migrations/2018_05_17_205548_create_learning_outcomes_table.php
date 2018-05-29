@@ -15,19 +15,13 @@ class CreateLearningOutcomesTable extends Migration
     {
         Schema::create('learning_outcomes', function (Blueprint $table) {
             //id,competence,name,detail
-            $table->increments('id');
-            //$table->integer('course')->unsigned()->index();
+            $table->increments('id');            
             $table->integer('competence')->unsigned()->index();
             $table->string('name')->unique();
             $table->string('detail');            
-            $table->timestamps();
-            //$table->foreign('course')->references('id')->on('courses');
+            $table->timestamps();            
             $table->foreign('competence')->references('id')->on('course_competences')->onDelete('cascade');
         });
-
-        /*Schema::table('learning_outcomes', function (Blueprint $table) {
-            $table->foreign('course')->references('id')->on('courses');
-        });*/
     }
 
     /**

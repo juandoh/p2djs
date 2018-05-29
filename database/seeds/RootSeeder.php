@@ -17,8 +17,7 @@ class RootSeeder extends Seeder
             'fullname'=>'root',
             'shortname'=>'root',
             'email'=>'root@admin.com',
-            'password'=>bcrypt('root'),
-            'role'=>0
+            'password'=>bcrypt('root')            
         ]);
     }
 }

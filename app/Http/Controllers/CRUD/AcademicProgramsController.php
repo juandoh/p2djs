@@ -4,11 +4,13 @@ namespace App\Http\Controllers\CRUD;
 
 use Auth;
 use Alert;
+use Relations;
 use App\AcademicPrograms;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\CRUD\SchoolsController;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\CRUD\SchoolsController;
+use App\Http\Controllers\Auth\RegisterController;
 
 class AcademicProgramsController extends Controller
 {
@@ -45,24 +47,26 @@ class AcademicProgramsController extends Controller
         $id = $data['id'];
         $ap = AcademicPrograms::find($id);
         
-        $ap->name = $data['name'];
-        $ap->school = $data['school'];
-        $ap->semester = $data['semester'];
-        $ap->credits = $data['credits'];
-
-        return $ap->save();
+        if($ap){
+            $ap->name = $data['name'];
+            $ap->school = $data['school'];
+            $ap->semester = $data['semester'];
+            $ap->credits = $data['credits'];
+            return $ap->save();
+        }
+        return false;
     }
 
     public function showEdit($id){        
         if(!is_null($id)){
-            $user = Auth::user();
+            $role = Relations::resolveRole(Auth::id());
             $program = AcademicPrograms::find($id);
             //dd($program);
             if(!$program){
                 alert()->info('Información','El Programa no se puede modificar dada su inhabilidad ó simplemente no existe');
                 return redirect()->back();
             }
-            if ($user->role == 2 or $user->role==3)
+            if ($role == 2 or $role==3)
                 return view('forms.CRUD.edit')
                             ->withMaster([
                                 'title'=>'Programa Academico',
@@ -82,7 +86,7 @@ class AcademicProgramsController extends Controller
     }
 
     public static function paginatePrograms(){
-        if(Auth::user()->role==3)
+        if(User::isDean(Auth::id()))
             return AcademicPrograms::withTrashed()->paginate(10);
         return AcademicPrograms::paginate(10);
     }
@@ -90,7 +94,7 @@ class AcademicProgramsController extends Controller
     //REST FUNCTIONS
     public function create(Request $request){
         //dd($request->all());
-        if(Auth::user()->role == 3){
+        if(User::isDean(Auth::id())){
             $data = $request->all();
             $this->validator($data,$this->rules)->validate();
 
@@ -104,7 +108,7 @@ class AcademicProgramsController extends Controller
     }
 
     public function update(Request $request){
-        if(Auth::user()->role == 3){
+        if(User::isDean(Auth::id())){
             $data = $request->all();
             $updateRules = $this->rules;
             $updateRules['name']='required|string|max:255';
@@ -122,7 +126,7 @@ class AcademicProgramsController extends Controller
     public function delete($id){
         if(!is_null($id)){
             //dd(User::find($id)->trashed());
-            $role =Auth::user()->role;
+            $role =User::resolveRole(Auth::id());
             if($role == 3 or $role==0){
                 if(AcademicPrograms::find($id)->delete()){
                     alert()->success("Exito!","El Programa Academico ha sido eliminado. Recuerde que debido a dependencias solo se desactiva");
@@ -138,7 +142,7 @@ class AcademicProgramsController extends Controller
     
     public function enable($id = null){
         if(!is_null($id)){
-            if(Auth::user()->role == 3){
+            if(User::isDean(Auth::id())){
                 $program = AcademicPrograms::onlyTrashed()->where('id',$id);
                 
                 if($program->restore()){

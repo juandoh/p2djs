@@ -30,20 +30,20 @@
                 </div>
             @endif
             @if($tab === 'crear')
-                <div id="menu1" class="tab-pane fade in active">
+                <div id="menu1" class="tab-pane fade in active">                    
                     <div class="panel panel-success">
                         <div class="panel-heading"><h4>Crear Usuario</h4></div>
                         <div class="panel-body">
-                            
+
                             {!! Form::open(['route'=>'register','class'=>'form-horizontal']) !!}
-                                @include('fields.user')
-                                <div class="form-group">
-                                    <div class="col-md-6 col-md-offset-4">
-                                        <button type="submit" class="btn btn-primary form-control">
-                                            Crear Usuario
-                                        </button>
-                                    </div>
+                            @include('fields.CRUD.user')
+                            <div class="form-group">
+                                <div class="col-md-6 col-md-offset-4">
+                                    <button type="submit" class="btn btn-primary form-control">
+                                        Crear Usuario
+                                    </button>
                                 </div>
+                            </div>
                             {!! Form::close() !!}                             
                         </div>
                     </div>

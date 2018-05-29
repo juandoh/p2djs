@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Session;
 
-use Illuminate\Http\Request;
-use App\User;
 use Auth;
+use Alert;
+use App\User;
+use Relations;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\CRUD\CoursesController;
 use App\Http\Controllers\CRUD\FacultiesController;
 use App\Http\Controllers\CRUD\SchoolsController;
 use App\Http\Controllers\Auth\RegisterController;
-
 
 class RootController extends Controller
 {
@@ -37,7 +39,7 @@ class RootController extends Controller
             return view("users.rootHome",["tab"=>$id])->withFaculties(FacultiesController::paginateFaculties());
         } else if ($id==='escuelas'){
             return view("users.rootHome",["tab"=>$id])->withSchools(SchoolsController::paginateSchools());  
-        } else{
+        } else {
             return view("users.rootHome",["tab"=>$id]);
         }
     }
@@ -47,10 +49,13 @@ class RootController extends Controller
             if(!is_null($tab))
                 if(!in_array($tab,$this->create))
                     return redirect()->back();
-            if (Auth::user()->role == 0){
+            
+            if (Relations::isAdmin(Auth::id())){
                 $user = User::find($id);
                 if(!is_null($user))
-                    return view('forms.rootUserConfig',['user'=>User::find($id), 'userType'=>$tab,'editing'=>true]);
+                    return view('forms.rootUserConfig',['user'=>$user, 'userType'=>$tab,'editing'=>true]);
+                else
+                    alert()->error('Error!','La cuenta se encuentra deshabilitada');
             }
         }
         return redirect()->back();

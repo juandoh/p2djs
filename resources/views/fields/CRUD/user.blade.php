@@ -1,12 +1,18 @@
 
 {{ csrf_field() }}
+@php
+    $user_id=Auth::id();
+    $role = Relations::resolveRole($user_id);
+    if(isset($relation))
+        $relation = User::getRelation($user->id);
+@endphp
 
 @if(isset($user))
     <input type="hidden" name="id" id="userid" value="{{ $user->id }}"/>
 @endif
-    @if(Auth::user()->role ==0)
-        <div class="form-group{{ $errors->has('role') ? ' has-error' : '' }}">
-            <label for="role" class="col-md-4 control-label">Rol del usuario</label>
+    @if($role == 0)
+        <div class="form-group {{ $errors->has('role') ? ' has-error' : '' }}">
+            <label for="role" class="col-md-4 control-label">Rol del usuario </label>
             <div class="col-md-6">
                 <ul class="nav nav-pills nav-justified">
                     <li class="{{ (isset($userType)?($userType==='docente'?'active':''):'active') }}">
@@ -60,25 +66,45 @@
                         @elseif ($userType==='decano')
                             {!! Form::hidden('role', 3, []) !!}
                         @else
-                            {!! Form::hidden('role', -1, []) !!}                            
+                            {!! Form::hidden('role', -1, []) !!}                         
                         @endif
                     @else
                         {!! Form::hidden('role', -1, []) !!}
                     @endisset
-                @endif
-                {{-- <a href="
-                        @if(isset($editing))
-                            @if($editing)
-                                {{ '/user/'.$user->id.'/decano' }}
-                            @endif
-                        @else
-                            {{ '/home/crear/decano' }}
-                        @endif
-                    ">Decano</a> --}}
+                @endif                
 
                 {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'role')}}
             </div>
         </div>
+
+        @if(Relations::isAdmin(Auth::id()))
+            <div class="well">
+                @isset ($userType)
+                    @if ($userType==='docente' or $userType === 'director')
+                        @include('fields.CRUD.programSelector')
+                    @elseif($userType === 'decano')
+                        @include('fields.CRUD.facultySelector')
+                    @endif
+                @endisset
+            </div>
+        @else
+            @isset ($user)
+                <div class="row">
+                    <label class="control-label  col-md-4"></label>
+                    <div class="col-md-6">
+                        <label class="form-control">
+                            {{--@if ($userType === 'docente')
+                            @php
+                            $
+                            @endphp
+                            @elseif ($userType === 'docente')
+                            @elseif ($userType === 'decano')
+                            @endif--}}
+                        </label>
+                    </div>
+                </div>    
+            @endisset            
+        @endif
     @endif
     <div class="form-group {{ $errors->has('fullname') ? ' has-error' : '' }}" id="fnamegroup">    
         {{ Form::label('fullname', 'Nombre Completo', ['class' => 'control-label col-md-4',]) }}
@@ -133,19 +159,17 @@
             <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
         </div>
     </div>
-
-    @if(Auth::user()->role != 0)
+    
+    @if($role !=0)
         <div class="form-group">
             <label class="control-label col-md-4">Rol</label>
             <div class="col-md-6">
                 <label class="form-control">
-                    @if ($user->role == 0)
-                        Administrador
-                    @elseif ($user->role == 1)
+                    @if ($role == 1)
                         Docente
-                    @elseif ($user->role == 2)
+                    @elseif ($role == 2)
                         Director de Plan
-                    @elseif ($user->role == 3)
+                    @elseif ($role == 3)
                         Decano
                     @endif
                 </label>

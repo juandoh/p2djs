@@ -4,10 +4,12 @@ namespace App\Http\Controllers\CRUD;
 
 use Auth;
 use Alert;
+use Relations;
 use App\Faculties;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Auth\RegisterController;
 
 class FacultiesController extends Controller
 {
@@ -37,9 +39,12 @@ class FacultiesController extends Controller
     
     private function edit(array $data,$id){
         $faculty = Faculties::find($id);
-        $faculty->name = $data['name'];
-        $faculty->detail = $data['detail'];
-        return $faculty->save();
+        if($faculty){
+            $faculty->name = $data['name'];
+            $faculty->detail = $data['detail'];
+            return $faculty->save();
+        }
+        return false;
     }
 
     public static function allFaculties(){        
@@ -47,7 +52,7 @@ class FacultiesController extends Controller
     }
 
     public static function paginateFaculties(){
-        if(Auth::user()->role==0)
+        if(Relations::isAdmin(Auth::id()))
             return Faculties::withTrashed()->paginate(10);
         return Faculties::paginate(10);
     }
@@ -63,7 +68,7 @@ class FacultiesController extends Controller
                 alert()->info('Información','La Facultad no se puede modificar dada su inhabilidad ó simplemente no existe');
                 return redirect('/home/facultades');
             }
-            if ($user->role == 0)
+            if (Relations::isAdmin(Auth::id()))
                 return view('forms.CRUD.edit')
                             ->withMaster([
                                 'title'=>'Facultad',
@@ -80,7 +85,7 @@ class FacultiesController extends Controller
     //POST
     public function create(Request $request){
         //dd($request->all());
-        if(Auth::user()->role == 0){
+        if(Relations::isAdmin(Auth::id())){
             $data = $request->all();
             $this->validator($data,$this->rules)->validate();
 
@@ -95,7 +100,7 @@ class FacultiesController extends Controller
 
     public function update(Request $request){
         //dd($request->all());
-        if(Auth::user()->role == 0){
+        if(Relations::isAdmin(Auth::id())){
             $rules=[
                 'name'=>'required|string|max:255|exists:faculties,name',
                 'detail'=>'required|string|max:255'
@@ -116,12 +121,12 @@ class FacultiesController extends Controller
     public function delete($id){
         //dd($id);
         if(!is_null($id)){
-            if(Auth::user()->role == 0){
+            if(Relations::isAdmin(Auth::id())){
                 if(Faculties::find($id)->delete()){
                     alert()->success("Exito!","La Facultad ha sido eliminada");
                     return redirect('/home/facultades');
                 }else{
-                    alert()->error("Error!","");                    
+                    alert()->error("Error!","La Facultad no pudo eliminarse");
                 }
             }else{
                 alert()->error("Error","Su cuenta no tiene el rol permitido para ejecutar esta acción");
@@ -132,7 +137,7 @@ class FacultiesController extends Controller
 
     public function enable($id = null){
         if(!is_null($id)){
-            if(Auth::user()->role == 0){
+            if(Relations::isAdmin(Auth::id())){
                 $faculty = Faculties::onlyTrashed()->where('id',$id);
                 
                 if($faculty->restore()){

@@ -1,10 +1,11 @@
 <?php
 
 use Faker\Generator as Faker;
+use App\UserAcademicProgramRelation;
 
 $factory->define(App\Courses::class, function (Faker $faker) {
 	//"name", "credits", "mhours", "ihours", "ctype", 
-	//"precourses", "valuable", "qualifiable" ,"p_academico","semester"
+	//"precourses", "valuable", "qualifiable" ,"program_id","semester"
 	$credits=$faker->numberBetween(2,4);
 	$semhours = $credits*3;
 	$mhours=0;
@@ -17,9 +18,11 @@ $factory->define(App\Courses::class, function (Faker $faker) {
     $validTeacher = false;
     do{
         $userId = $faker->numberBetween(1,20);
-        if(App\User::find($userId)->role == 1){
-            $validTeacher = true;
-        }
+        $teacher = App\UserAcademicProgramRelation::where('user_id',$userId)->first();
+        if(!is_null($teacher))            
+            if($teacher->role == 1){
+                $validTeacher = true;
+            }
     }while(!$validTeacher);
 
 
@@ -29,11 +32,10 @@ $factory->define(App\Courses::class, function (Faker $faker) {
         'credits'=>$credits,
         'mhours'=>$mhours,
         'ihours'=>$ihours,
-        'ctype'=>$faker->numberBetween(1,4),
-        'precourses'=>$faker->sentence(5),
+        'ctype'=>$faker->numberBetween(1,4),        
         'valuable'=>$faker->numberBetween(0,1),
         'qualifiable'=>$faker->numberBetween(0,1),
-        'p_academico'=>$faker->numberBetween(1,10),
+        'program_id'=>$faker->numberBetween(1,10),
         'semester'=>$faker->numberBetween(1,10),
         'created_by'=>$userId
     ];

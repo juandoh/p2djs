@@ -27,13 +27,13 @@ class Courses extends Model
         "precourses", 
         "valuable",
         "qualifiable" ,
-        "p_academico",
+        "program_id",
         "semester",
         "created_by"
         ];
     
     public function program(){
-        return $this->hasOne("App\AcademicPrograms",'id','p_academico');
+        return $this->hasOne("App\AcademicPrograms",'id','program_id');
     }
 
     public function creator(){

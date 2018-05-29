@@ -17,8 +17,7 @@ class UserSeeder extends Seeder
             'fullname'=>'teacher',
             'shortname'=>'teacher',
             'email'=>'teacher@2djs.com',
-            'password'=>bcrypt('teacher'),
-            'role'=>1            
+            'password'=>bcrypt('teacher')
         ]);
 
         //id,fullname,shortname,email,password,role,enabled
@@ -26,8 +25,7 @@ class UserSeeder extends Seeder
             'fullname'=>'plan director',
             'shortname'=>'director',
             'email'=>'director@2djs.com',
-            'password'=>bcrypt('director'),
-            'role'=>2            
+            'password'=>bcrypt('director')
         ]);
 
         //id,fullname,shortname,email,password,role,enabled
@@ -35,10 +33,14 @@ class UserSeeder extends Seeder
             'fullname'=>'faculty dean',
             'shortname'=>'dean',
             'email'=>'dean@2djs.com',
-            'password'=>bcrypt('dean'),
-            'role'=>3            
+            'password'=>bcrypt('dean')            
         ]);
 
-        factory(App\User::class,30)->create();
+        DB::table('user_admin_relations')->insert(['user_id'=>1,'role'=>0]);
+        DB::table('user_academic_program_relations')->insert(['user_id'=>2,'role'=>1,'program_id'=>1]);   
+        DB::table('user_academic_program_relations')->insert(['user_id'=>3,'role'=>2,'program_id'=>1]);
+        DB::table('user_faculty_relations')->insert(['user_id'=>4,'role'=>3,'faculty_id'=>1]);
+
+        //factory(App\User::class,30)->create();
     }
 }

@@ -110,7 +110,7 @@
                     <center>
                         <h4>
                         <p align="center" style="width:50%;">
-                            Para apoyar la reforma curricular de la Facultad de Ingeniería de la Universidad del Valle, se desarrolló este sistema para asistir a los docentes en la tarea de diseño de los cursos.
+                            Para apoyar la reforma curricular de la Facultad de Ingeniería de la Universidad del Valle, se desarrolló este sistema para asistir a los docentes en la tarea de diseño de los cursos.                            
                         </p>
                         </h4>
                     </center>

@@ -3,13 +3,18 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use Relations;
 use Illuminate\Http\Request;
+use App\Http\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\CustomValidator;
 use Illuminate\Support\Facades\Validator;
 
-use App\Http\Auth\RegistersUsers;
+use App\UserAdminRelation;
+use App\UserFacultyRelation;
+use App\UserAcademicProgramRelation;
+use App\Http\Controllers\Auth\RegisterController;
 
 
 
@@ -25,17 +30,6 @@ class RegisterController extends Controller
     | provide this functionality without requiring any additional code.
     |
     */
-
-    //use RegistersUsers;
-    
-
-    /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    //protected $redirectTo = '/home';
-
     /**
      * Create a new controller instance.
      *
@@ -46,19 +40,12 @@ class RegisterController extends Controller
         $this->middleware('auth');
     }
 
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-
     private $rules = [
         'fullname' => 'required|string|max:191|min:10',
         'shortname' => 'required|string|max:191|min:5|unique:users',
         'email' => 'required|string|email|max:191|unique:users',
         'password' => 'required|string|min:6|confirmed',
-        'role' => 'required|min:1|max:3'
+        'role' => 'required|min:1|max:3',
     ];
 
     private $messages = [
@@ -68,7 +55,10 @@ class RegisterController extends Controller
         'fullname.max' => "El nombre completo debe tener al menos :max caracteres",
         'shortname.max' => "El nombre corto debe tener al menos :max caracteres",        
         'email.unique' => 'El correo electronico ya se ha asignado',
-        'password.min' => "La contraseña debe tener al menos :min caracteres",        
+        'password.min' => "La contraseña debe tener al menos :min caracteres",   
+        'program_id.exists'=>"El Programa Academico seleccionado no existe",
+        'faculty_id.exists'=>"La Facultad seleccionada no existe",
+        'password.confirmed'=>'Las contraseñas no coinciden',
     ];
 
     protected function validator(array $data, $rules)
@@ -80,89 +70,132 @@ class RegisterController extends Controller
         return CustomValidator::validateField($request,$this->rules,$this->messages);
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return \App\User
-     */
     protected function create(array $data)
     {
         return User::create([
             'fullname' => $data['fullname'],
             'shortname' => $data['shortname'],
             'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-            'role' => $data['role'],
+            'password' => bcrypt($data['password'])            
         ]);
     }
 
     protected function update(array $data)
     {        
-        $user = User::find($data['id']);
+        $user_id = $data['id'];
+        $user = User::find($user_id);
         //dd($user);
+        if(is_null($user))
+            return false;
+
         $user->fullname = $data['fullname'];
         $user->shortname = $data['shortname'];
         $user->email = $data['email'];
         $user->password = bcrypt($data['password']);
-        
-        if(Auth::user()->role == 0){
-            $user->role = $data['role'];
-        }
 
         return $user->save();
     }
 
+    private function updateRole($user_id){
+        if(array_key_exists('role', $data) and array_key_exists('program_id', $data)){
+            $drole=(int)$data['role'];
+            if($drole== 1 or $drole== 2){ //teacher
+                if(Relations::isProgramBinded($user_id)){
+                    UserAcademicProgramRelation::where('user_id',$user_id)->delete();
+                }
+                return Relations::bindUserProgram($user_id, $role, $data['program_id']);                
+            }
+        }elseif(array_key_exists('role', $data) and array_key_exists('faculty_id', $data)){
+            if($drole == 3){
+                if(Relations::isFacultyBinded($user_id)){
+                    UserFacultyRelation::where('user_id',$user_id)->delete();
+                }
+                return Relations::bindUserFaculty($user_id, $drole, $data['program_id']);
+            }
+        }
+        return false;
+    }
+
     
     public function registerUser(Request $request){
-        $data = $request->all();
         //dd($data);
-        $this->validator($data, $this->rules)->validate();
+        if(Relations::isAdmin(Auth::id())){
+            $data = $request->all();
+            //dd($data);
+            $rules = $this->rules;
 
-        if($this->create($data)){
-            alert()->success("Exito!","Usuario registrado");
-        }else{
-            alert()->error("Error!","Un inconveniente ha ocurrido");
+            $bindProgram = array_key_exists('program_id', $data);
+            $bindFaculty = array_key_exists('faculty_id', $data);
+            if($bindProgram){
+                $rules['program_id'] = 'required|integer|exists:academic_programs,id';
+            }elseif($bindFaculty){
+                $rules['faculty_id'] = 'required|integer|exists:faculties,id';
+            }
+
+            $this->validator($data, $rules)->validate();
+
+            $user = $this->create($data);
+            if($user){
+                $success=false;
+                if($bindProgram){
+                    $success = Relations::bindUserProgram($user->id,$data['role'],$data['program_id']);
+                }elseif($bindFaculty){
+                    $success = Relations::bindUserFaculty($user->id,$data['role'],$data['faculty_id']);                        
+                }
+
+                if($success){
+                    alert()->success("Exito!","Usuario registrado correctamente");
+                    return redirect()->back();
+                }else{
+                    $user->delete();
+                }
+            }            
         }
-        //toast("Usuario registrado!",'success','bottom-right');
+        alert()->error("Error!","Un inconveniente ha ocurrido");
         return redirect()->back();
     }
 
     public function updateUser(Request $request){
         $data = $request->all();
         //dd($data);        
-        if(Auth::user()->role == 0){
-            $rules = [
-                'id'=>'exists:users,id',
-                'fullname' => 'required|string|max:255|min:10',
-                'shortname' => 'required|string|max:255|min:5',
-                'email' => 'required|string|email|max:255',
-                'password' => 'required|string|min:6|confirmed',
-            ];
+        $rules = [
+            'id'=>'exists:users,id',
+            'fullname' => 'required|string|max:255|min:10',
+            'shortname' => 'required|string|max:255|min:5',
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:6|confirmed',
+        ];
 
-            if(Auth::user()->role == 0){
-                $rules['role'] = 'required';
-            }
-
-            $this->validator($data,$rules)->validate();
-            if($this->update($data)){
-                alert()->success("Exito!","Cambios guardados");
-                return redirect()->back();
+        if(Relations::isAdmin(Auth::id())){
+            if(array_key_exists('program_id', $data)){
+                $rules['program_id'] = 'required|integer|exists:academic_programs,id';
+            }elseif(array_key_exists('faculty_id', $data)){
+                $rules['faculty_id'] = 'required|integer|exists:faculties,id';
             }
         }
-        alert()->error("Error!","Un inconveniente ha ocurrido");
+
+        $this->validator($data,$rules)->validate();
+        if($this->update($data)){
+            alert()->success("Exito!","Cambios guardados");
+        }else{
+            alert()->error("Error!","Un inconveniente ha ocurrido");            
+        }
+
         return redirect()->back();
     }
 
     public static function listUsers(){
-        return User::withTrashed()->paginate(10);
+        if(Relations::isAdmin(Auth::id()))
+            return User::withTrashed()->paginate(10);
+        else
+            return null;
     }
 
     public function deleteUser($id = null){        
         if(!is_null($id) and $id != 1){
             //dd(User::find($id)->trashed());
             if(User::find($id)->delete()){
-                if(Auth::user()->role != 0){
+                if(!Relations::isAdmin(Auth::id())){
                     Auth::logout();
                     alert()->warning("Atención!","Su cuenta ha sido deshabilitada, para volver a acceder comuniquese con un administrador");
                 }else{
@@ -176,7 +209,7 @@ class RegisterController extends Controller
     }
 
     public function enableUser($id = null){
-        if(!is_null($id)){
+        if(!is_null($id) and Relations::isAdmin(Auth::id())){
             $user = User::onlyTrashed()->where('id',$id);
             
             if($user->restore()){
