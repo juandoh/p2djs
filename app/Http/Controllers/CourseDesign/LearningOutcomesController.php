@@ -23,25 +23,25 @@ class LearningOutcomesController extends Controller
     ];
     
     //Database
-    private function store(array $data){
+    public static function store(array $data){
         //id,competence,name,detail
         return LearningOutcomes::create([
-            'competence'=>data['competence'],
-            'name'=>data['name'],
-            'detail'=>data['detail']
+            'competence'=>$data['competence'],
+            'name'=>$data['name'],
+            'detail'=>$data['detail']
         ]);
     }
     
-    private function edit(array $data, $id){
+    public static function edit(array $data, $id){
         $competence = LearningOutcomes::find($id);
-        $competence->competence=data['competence'];
-        $competence->name=data['name'];
-        $competence->detail=data['detail'];
+        $competence->competence=$data['competence'];
+        $competence->name=$data['name'];
+        $competence->detail=$data['detail'];
 
         return $competence->save();
     }
 
-    private function destroy($id){
+    public static function destroy($id){
         return LearningOutcomes::destroy($id);
     }
     //REST FUNCTIONS

@@ -23,25 +23,25 @@ class AchievementIndicatorsController extends Controller
     ];
 
     //Database
-    private function store(array $data){
+    public static function store(array $data){
         //id,learningO,name,detail
         return AchievementIndicators::create([
-            'learningO'=>data['learningO'],
-            'name'=>data['name'],
-            'detail'=>data['detail']
+            'learningO'=>$data['learningO'],
+            'name'=>$data['name'],
+            'detail'=>$data['detail']
         ]);
     }
     
-    private function edit(array $data, $id){
+    public static function edit(array $data, $id){
         $competence = AchievementIndicators::find($id);
-        $competence->learningO=data['learningO'];
-        $competence->name=data['name'];
-        $competence->detail=data['detail'];
+        $competence->learningO=$data['learningO'];
+        $competence->name=$data['name'];
+        $competence->detail=$data['detail'];
 
         return $competence->save();
     }
 
-    private function destroy($id){
+    public static function destroy($id){
         return AchievementIndicators::destroy($id);
     }
 

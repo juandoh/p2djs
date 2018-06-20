@@ -4,6 +4,7 @@ namespace App\Http\Controllers\CourseDesign;
 
 use Auth;
 use Alert;
+use App\Courses;
 use App\CourseCompetences;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -23,7 +24,7 @@ class CourseCompetencesController extends Controller
     ];
 
     //Database
-    private function store(array $data){
+    public static function store(array $data){
         //id,course,name,detail
         return CourseCompetences::create([
             'course'=>(int)$data['course'],
@@ -32,7 +33,7 @@ class CourseCompetencesController extends Controller
         ]);
     }
     
-    private function edit(array $data, $id){
+    public static function edit(array $data, $id){
         $competence = CourseCompetences::find($id);
         $competence->course=$data['course'];
         $competence->name=$data['name'];
@@ -41,13 +42,15 @@ class CourseCompetencesController extends Controller
         return $competence->save();
     }
 
-    private function destroy($id){
+    public static function destroy($id){
         return CourseCompetences::destroy($id);
     }
 
     public static function listCompetences($course_id){
-        return CourseCompetences::where('course_id',$course_id);
+        return CourseCompetences::where('course',$course_id)->get();
     }
+
+    
 
     //REST FUNCTIONS
     //GET

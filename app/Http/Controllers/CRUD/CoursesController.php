@@ -12,6 +12,9 @@ use Illuminate\Support\MessageBag;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CourseDesign\CourseCompetencesController;
+use App\Http\Controllers\CourseDesign\LearningOutcomesController;
+use App\Http\Controllers\CourseDesign\AchievementIndicatorsController;
 
 class CoursesController extends Controller
 {
@@ -158,11 +161,58 @@ class CoursesController extends Controller
                 if(!$course){
                     alert()->info('Información','El Curso no se puede modificar dada su inhabilidad, no existe, ó no lo tiene asignado');
                 }else{
-                    return view('forms.CourseDesign.design',['course'=>$course]);
+                    return view('forms.CourseDesign.design',['course'=>$course])->withCompetences(CourseCompetencesController::listCompetences((int)$id));
                 }
             }
             return redirect('/home/consultar');
         }
+    }
+
+    public function addCompetence($id){
+        if(Courses::find($id))
+            return view('forms.CourseDesign.competence')->with(['course_id'=>$id,"competence_id"=>0]);
+    }
+
+    public function saveCompetence(Request $request){
+        //dd($request->all());
+        $error = false;
+        $data = $request->all();
+        $competence = ['course'=>$data['course_id'], 'name'=> $data['name'],'detail'=>$data['detail']];
+        $competenceSave =CourseCompetencesController::store($competence);
+        if($competenceSave){
+            $competence_id = $competenceSave->id;
+            $i=0;
+            while(array_key_exists('ra_'.$i, $data)){
+                $learningoutcome = ['competence'=>$competence_id, 'name'=>$data['ra_'.$i], 'detail'=>$data['ra_'.$i.'_detail']];
+                $save = LearningOutcomesController::store($learningoutcome);
+                $learning_id = $save->id;
+                if($save){
+                    $j = 0;
+                    while(array_key_exists('ra_'.$i.'_achievement_'.$j, $data)){
+                        $achievement = ['learningO'=>$learning_id,'name'=>$data['ra_'.$i.'_achievement_'.$j],'detail'=>$data['achievement_'.$j.'_detail']];
+                        $achievement_save = AchievementIndicatorsController::store($achievement);
+                        $j+=1;
+                    }
+                    if($j==0){
+                        $error = true;
+                    }
+                }
+                $i+=1;
+                if($error){
+                    $save->delete();
+                }
+            }
+            if($i==0){
+                $error = true;
+            }
+        }
+        if($error){
+            $competenceSave->delete();
+            alert()->error("Error!","Por cada competencia debe haber al menos 1 resultado de aprendizaje, y por cada resultado de aprendizaje debe haber al menos 1 indicador de logro");            
+        }else{
+            alert()->success("Exito!","Se ha registrado correctamente la competencia");
+        }
+        return redirect()->back();            
     }
 
     //POST
