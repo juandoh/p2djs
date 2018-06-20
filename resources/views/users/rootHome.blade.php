@@ -14,7 +14,7 @@
         @if(isset($tab))
             <?php $tabs=[
                 'consultar'=>'Consultar Usuarios',
-                'crear'=>'Crear Usuarios',
+                'crear/docente'=>'Crear Usuarios',
                 'facultades'=>'Manejo de Facultades',
                 'escuelas'=>'Manejo de Escuelas'
             ];?>
