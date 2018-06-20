@@ -13,7 +13,8 @@
                         ['-1'=>'']+$options,
                         (isset($school) ? $school->faculty:old('school')),
                         ['class'=>'form-control','required'=>''])  }}
-        </div>
         {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'faculty')}}
+        </div>
+        
     </div>
 </div>

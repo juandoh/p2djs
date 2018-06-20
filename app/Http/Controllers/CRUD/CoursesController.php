@@ -67,9 +67,12 @@ class CoursesController extends Controller
     }
     private function edit(array $data,$id){
         $course = Courses::find($id);
-        //dd($course);
-        //dd(User::find($data['created_by']));
         if($course){
+            $i=1;
+            while(array_key_exists('precourse_id_'.$i, $data)){
+                Relations::bindCoursePrerequisite($id, (int)$data['precourse_id_'.$i]);
+                $i+=1;
+            }
             $course->name = $data['name'];
             $course->credits = $data['credits'];
             $course->mhours = $data['mhours'];
@@ -115,7 +118,8 @@ class CoursesController extends Controller
             ])
             ->withData($course)
             ->withPrograms(AcademicProgramsController::allPrograms())
-            ->withAvailableCourses(CoursesController::allCourses());
+            ->withAvailableCourses(CoursesController::allCourses())
+            ->withPrecourseList(Relations::getCoursePrerequisites($id));
             else
                 return redirect('/home/consultar');
         }
@@ -180,8 +184,13 @@ class CoursesController extends Controller
             }
 
             $this->validator($data,$this->rules)->validate();
-
-            if($this->store($data)){
+            $store = $this->store($data);
+            if($store){
+                $i=1;
+                while(array_key_exists('precourse_id_'.$i, $data)){
+                    Relations::bindCoursePrerequisite($store->id, (int)$data['precourse_id_'.$i]);
+                    $i+=1;
+                }
                 alert()->success("Exito!","El Curso ha sido registrado");
                 return redirect()->back();
             }
@@ -238,5 +247,13 @@ class CoursesController extends Controller
             }
         }
         return redirect("/home/consultar");
+    }
+
+    public function deletePrerequisite(Request $request){
+        $data = $request->all();
+        $course_id = $data["course_id"];
+        $prerequiste = $data["prerequisite"];
+        $del = Relations::unbindCoursePrerequisite($course_id,$prerequiste);
+        return ["done"=>$del];        
     }
 }

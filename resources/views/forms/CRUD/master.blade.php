@@ -11,7 +11,9 @@
                             <h4>Modificar {{ $master['title'] }}:</h4>
                         </div>                        
                         <div class="col-md-3 col-sm-3">
-                            <a style="min-width: 90px;" onclick="window.history.back()" class="btn btn-success form-control">Volver</a> 
+                            @if(!isset($tab))
+                                <a style="min-width: 90px;" onclick="window.history.back()" class="btn btn-success form-control">Volver</a> 
+                            @endif
                         </div>
                     </div>                    
                 @endif

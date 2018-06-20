@@ -66,6 +66,7 @@ foreach($arr as $name=>$control){
 
 Route::get('/design/course/{id}','CRUD\CoursesController@showDesigner');
 Route::get('/info/course/{id}','CRUD\CoursesController@showInfo');
+Route::post('/deletePrerequisite','CRUD\CoursesController@deletePrerequisite')->name("deletePrerequisite");
 
 //##########################################TEST################
 Route::get('/post','Testing\PostController@show')->name('post');

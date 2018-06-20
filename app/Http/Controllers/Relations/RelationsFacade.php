@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Relations;
 
 use App\User;
+use App\Courses;
 use App\Faculties;
 use App\AcademicPrograms;
 use App\UserAdminRelation;
 use App\UserFacultyRelation;
 use App\Http\Auth\RegistersUsers;
+use App\CoursePrerequisiteRelation;
 use App\UserAcademicProgramRelation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Facade;
@@ -151,4 +153,32 @@ class RelationsFacade extends Facade {
 		return false;
 	}
 
+	public static function bindCoursePrerequisite($course_id,$prerequisite){
+		$relation = CoursePrerequisiteRelation::where('course_id',$course_id)->where('prerequisite',$prerequisite)->first();
+		if(is_null($relation))
+			$relation = new CoursePrerequisiteRelation;
+		$relation->course_id = $course_id;
+		$relation->prerequisite = $prerequisite;
+		return $relation->save();
+	}
+
+	public static function unbindCoursePrerequisite($course_id,$prerequisite){
+		$relation = CoursePrerequisiteRelation::where('course_id',$course_id)->where('prerequisite',$prerequisite)->first();	
+		if(is_null($relation))
+			return false;
+
+		return $relation->delete();
+	}
+
+	public static function getCoursePrerequisites($course_id){
+		$relation = CoursePrerequisiteRelation::where('course_id',$course_id)->get();
+		$preList = [];
+		foreach($relation as $row){
+			$course = Courses::find($row->prerequisite);
+			array_push($preList, $course);
+		}
+
+		return $preList;
+	}
+	
 }

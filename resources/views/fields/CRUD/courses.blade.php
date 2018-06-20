@@ -23,7 +23,7 @@
 </div>
 
 @if(isset($course))
-    {!! Form::hidden('id', $course->id) !!}
+    {!! Form::hidden('id', $course->id, ['id'=>"course_id"]) !!}
     {!! Form::hidden('created_by', $course->creator->id) !!}
 @else
     {!! Form::hidden('created_by', Auth::id()) !!}
@@ -119,9 +119,58 @@
 </div>
 
 <div class="well">
-    <div class="row" id="precourses">        
+    <div class="row" >
+        @isset ($precourseList)
+            @php $precourseCount = 1; @endphp
+            <div class="col-md-12">
+                <table class="table table-responsive">
+                    <thead>
+                        <th>#</th>
+                        <th>Precurso</th>
+                        <th>Opciones</th>
+                    </thead>
+                    <tbody id="precourses">
+                        @foreach ($precourseList as $precourse)                            
+                            <tr>
+                                <th>
+                                    {{ $precourseCount }}
+                                </th>
+                                <th>                            
+                                    {!! Form::hidden("precourse_id_".$precourseCount, $precourse->id, ["id"=>"precourse_id_".$precourseCount,"style"=>"display:none;"]) !!}
+                                    <label class="control-label">  {{ $precourse->name }} </label>        
+                                </th>
+                                <th>                                    
+                                    <a class="btn btn-danger" onclick="deletePrerequisite('precourse_id_{{$precourseCount}}')">Eliminar prerrequisito</a>
+                                </th>
+                            </tr>                            
+                            @php $precourseCount++ @endphp                        
+                        @endforeach
+                    </tbody>
+                    <script>                                                    
+                        function deletePrerequisite(id){
+                            var prerequisite = $('#'+id).val(); 
+                            var course_id = $('#course_id').val();                             
+                            axios.post('{{ route('deletePrerequisite') }}', {course_id:course_id,prerequisite:prerequisite})
+                            .then(
+                                function (response) {                                                                                
+                                    console.log(response);
+                                    if(response['data']['done']){
+                                        swal("Eliminado con exito","","success").then(function(){location.reload()});
+                                    }else{
+                                        swal("Ha ocurrido un inconveniente","","error").then(function(){location.reload()});
+                                    }                                    
+                                })
+                            .catch(
+                                function (error) {
+                                    console.log(error);
+                                });
+                        }
+                    </script>
+                </table>
+            </div>
+        @endisset
     </div>
-    <label> Agregar Precurso</label>
+    <label>Agregar Precurso</label>
     <label class="form-control" class="btn btn-info" id="addPrecourse">
         <center>
             <span class="glyphicon glyphicon-plus"></span>
@@ -145,12 +194,21 @@
             }).then(function (result) {                
                 if(result.value){
                     console.log(result);
-                    var html = `<div class="col-md-12">
+                    /*var html = `<div class="col-md-12">
                                     <label>Precurso ${precourseCount}</label>
                                     <input type="hidden" name="precourse_id_${precourseCount}" value="${result.value}">
                                     <label class="control-label form-control">${precoursesOptions[result.value]}</label>
-                                </div>`;
+                                </div>`;*/
+                    var html = `<tr><th>
+                                    ${precourseCount}
+                                    </th>
+                                    <th>
+                                        <input type="hidden" name="precourse_id_${precourseCount}" value="${result.value}" style="display:none;">
+                                        <label class="control-label">${precoursesOptions[result.value]}</label>
+                                    </th>
+                                </tr>`;
                     $("#precourses").append(html);
+                    precourseCount++;
                 }
             });
         });

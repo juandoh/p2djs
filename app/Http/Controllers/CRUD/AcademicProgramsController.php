@@ -50,7 +50,7 @@ class AcademicProgramsController extends Controller
         if($ap){
             $ap->name = $data['name'];
             $ap->school = $data['school'];
-            $ap->semester = $data['semester'];
+            $ap->semesters = $data['semesters'];
             $ap->credits = $data['credits'];
             return $ap->save();
         }
@@ -86,7 +86,7 @@ class AcademicProgramsController extends Controller
     }
 
     public static function paginatePrograms(){
-        if(User::isDean(Auth::id()))
+        if(Relations::isDean(Auth::id()))
             return AcademicPrograms::withTrashed()->paginate(10);
         return AcademicPrograms::paginate(10);
     }
@@ -94,7 +94,7 @@ class AcademicProgramsController extends Controller
     //REST FUNCTIONS
     public function create(Request $request){
         //dd($request->all());
-        if(User::isDean(Auth::id())){
+        if(Relations::isDean(Auth::id())){
             $data = $request->all();
             $this->validator($data,$this->rules)->validate();
 
@@ -108,7 +108,8 @@ class AcademicProgramsController extends Controller
     }
 
     public function update(Request $request){
-        if(User::isDean(Auth::id())){
+        $id = Auth::id();
+        if(Relations::isDean($id) or Relations::isDirector($id)){
             $data = $request->all();
             $updateRules = $this->rules;
             $updateRules['name']='required|string|max:255';
@@ -142,7 +143,7 @@ class AcademicProgramsController extends Controller
     
     public function enable($id = null){
         if(!is_null($id)){
-            if(User::isDean(Auth::id())){
+            if(Relations::isDean(Auth::id())){
                 $program = AcademicPrograms::onlyTrashed()->where('id',$id);
                 
                 if($program->restore()){

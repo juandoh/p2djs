@@ -53,6 +53,7 @@ class SchoolsController extends Controller
         return Schools::all();
     }
 
+    
     public static function paginateSchools(){
         if(Relations::isAdmin(Auth::id()))
             return Schools::withTrashed()->paginate(10);
