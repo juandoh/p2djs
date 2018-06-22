@@ -3,7 +3,7 @@
 @php
     $user_id=Auth::id();
     $role = Relations::resolveRole($user_id);
-    if(!isset($relation))
+    if(isset($user))
         $relation = Relations::getRelation($user->id);
 @endphp
 

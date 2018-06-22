@@ -20,6 +20,9 @@
     @endisset
 </div>
 
+@isset($_old_input)
+{{ var_dump($_old_input) }}
+@endisset
 <script type="text/javascript">
     var precourseList = [];
 </script>

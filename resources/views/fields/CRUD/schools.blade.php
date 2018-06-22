@@ -13,7 +13,7 @@
 
 <div class="form-group{{ $errors->has('detail') ? ' has-error' : '' }}">
     {{ Form::label('detail', 'Descripción', ['class'=>'control-label']) }}        
-    {{ Form::textarea('detail', (isset($school)?$school->detail:old('detail')), ['class'=>'form-control','required'=>'']) }}
+    {{ Form::textarea('detail', (isset($school)?$school->detail:old('detail')), ['class'=>'form-control','required'=>'',"rows"=>3]) }}
     {{--onkeyup="check('sname','shortname','snamegroup')" --}}
     {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'detail')}}
 </div>

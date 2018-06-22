@@ -22,11 +22,10 @@ class PostController extends Controller
 
      public function store(Request $request){
         //print_r($request->all());
-        dd($request->all());
+        //dd($request->all());
         $validator = Validator::make($request->all(),[
-           'title'=>'required|max:8',
-           'option'=>'required|exists:users,id',
-           'body'=>'required'
+           'title'=>'required|max:8',           
+           'body'=>'required|min:10'
         ]);
 
         $validator->validate();

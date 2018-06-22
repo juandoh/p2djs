@@ -65,10 +65,11 @@ foreach($arr as $name=>$control){
 }
 
 Route::get('/design/course/{id}','CRUD\CoursesController@showDesigner');
-Route::get('/design/course/{id}/add_competence', 'CRUD\CoursesController@addCompetence');
-Route::post('/save_competence', 'CRUD\CoursesController@saveCompetence');
 Route::get('/info/course/{id}','CRUD\CoursesController@showInfo');
 Route::post('/deletePrerequisite','CRUD\CoursesController@deletePrerequisite')->name("deletePrerequisite");
+
+Route::get('/design/course/{id}/new', 'CourseDesign\CourseCompetencesController@showCreate');
+Route::post('/save_competence', 'CourseDesign\CourseCompetencesController@create');
 
 //##########################################TEST################
 Route::get('/post','Testing\PostController@show')->name('post');

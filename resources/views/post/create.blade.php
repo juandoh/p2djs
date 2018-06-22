@@ -2,7 +2,7 @@
 
 @section('content')
 
-{{--
+
 @if ($errors->any())
     <div class="alert alert-danger">
         <ul>
@@ -12,7 +12,7 @@
         </ul>
     </div>
 @endif
-
+{{--
 
 @if(session()->has('message'))
     <div class="alert alert-success">
@@ -22,8 +22,19 @@
 --}}
 
 
-
-
+@php
+    $asd = Form::getSession(); 
+    echo var_dump($asd);
+    //echo old("body");
+@endphp 
+{{--
+@foreach ($asd as $key=>$el)
+    {{ $key }}
+    {{ var_dump($el) }}
+    
+    <br>
+@endforeach
+--}}
 
 <form action="/post" method="POST">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -61,8 +72,8 @@
 
         </div>
     </div>
-    <div class="form-group">
-        <input type="text" name="body" class="form-control"/>
+    <div class="form-group {{ $errors->has('body') ? ' has-error' : '' }}">
+        <input type="text" name="body" class="form-control" value="{{ old('body') }}"/>
     </div>
     <div class="form-group">
             <input type="submit" name="submit" class="btn btn-info" value="Submit"/>
