@@ -8,9 +8,8 @@
     if(isset($relation)){
     	if(!is_null($relation->program_id))	
     		$value=$relation->program_id;
-    	
-    	if(!is_null($relation->faculty_id))	
-    		$value=$relation->faculty_id;    	
+        else
+            $value = -1;
     }else{
     	$value=(isset($course) ? $course->program_id:old('program_id'));
     }

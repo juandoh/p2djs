@@ -3,8 +3,8 @@
 @php
     $user_id=Auth::id();
     $role = Relations::resolveRole($user_id);
-    if(isset($relation))
-        $relation = User::getRelation($user->id);
+    if(!isset($relation))
+        $relation = Relations::getRelation($user->id);
 @endphp
 
 @if(isset($user))
@@ -15,49 +15,26 @@
             <label for="role" class="col-md-4 control-label">Rol del usuario </label>
             <div class="col-md-6">
                 <ul class="nav nav-pills nav-justified">
-                    <li class="{{ (isset($userType)?($userType==='docente'?'active':''):'active') }}">
-                        <a href="
-                            @if(isset($editing))
-                                @if($editing)
-                                    {{ '/user/'.$user->id.'/docente' }}
-                                @endif
-                            @else
-                                {{ '/home/crear/docente' }}
-                            @endif
-                        ">
-                            Docente
-                        </a>
+                    @php
+                        if(isset($editing)){
+                            if($editing)
+                                $href="/user/".((string)$user->id);
+                        }else{
+                            $href='/home/crear';
+                        }
+                    @endphp
+                    <li class="{{ (isset($userType)?(($userType==='docente')?'active':''):'active') }}">                         
+                        <a href="{{ $href.'/docente' }}">Docente</a>
                     </li>
-                    <li class="{{ (isset($userType)?($userType==='director'?'active':''):'') }}">
-                        <a href="
-                            @if(isset($editing))
-                                @if($editing)
-                                    {{ '/user/'.$user->id.'/director' }}
-                                @endif
-                            @else
-                                {{ '/home/crear/director' }}
-                            @endif
-                        ">
-                            Director
-                        </a>
+                    <li class="{{ (isset($userType)?(($userType==='director')?'active':''):'') }}">
+                        <a href="{{ $href.'/director' }}">Director</a>
                     </li>
-                    <li class="{{ (isset($userType)?($userType==='decano'?'active':''):'') }}">
-                        <a href="
-                            @if(isset($editing))
-                                @if($editing)
-                                    {{ '/user/'.$user->id.'/decano' }}
-                                @endif
-                            @else
-                                {{ '/home/crear/decano' }}
-                            @endif
-                        ">Decano
-                        </a>
-                    </li>                    
+                    <li class="{{ (isset($userType)?(($userType==='decano')?'active':''):'') }}">
+                        <a href="{{ $href.'/decano' }}">Decano</a>
+                    </li>
                 </ul> 
 
-                @if(isset($user))
-                    {!! Form::hidden('role', $user->role, []) !!} 
-                @else
+                @if(Relations::isAdmin(Auth::id()))
                     @isset ($userType)
                         @if ($userType==='docente')
                             {!! Form::hidden('role', 1, []) !!} 
@@ -71,6 +48,8 @@
                     @else
                         {!! Form::hidden('role', -1, []) !!}
                     @endisset
+                @else
+                    {!! Form::hidden('role', $user->role, []) !!} 
                 @endif                
 
                 {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'role')}}
@@ -86,24 +65,7 @@
                         @include('fields.CRUD.facultySelector')
                     @endif
                 @endisset
-            </div>
-        @else
-            @isset ($user)
-                <div class="row">
-                    <label class="control-label  col-md-4"></label>
-                    <div class="col-md-6">
-                        <label class="form-control">
-                            {{--@if ($userType === 'docente')
-                            @php
-                            $
-                            @endphp
-                            @elseif ($userType === 'docente')
-                            @elseif ($userType === 'decano')
-                            @endif--}}
-                        </label>
-                    </div>
-                </div>    
-            @endisset            
+            </div>   
         @endif
     @endif
     <div class="form-group {{ $errors->has('fullname') ? ' has-error' : '' }}" id="fnamegroup">    

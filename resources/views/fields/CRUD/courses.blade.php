@@ -4,9 +4,7 @@
         '2'=>'Asignatura profesional',
         '3'=>'Electiva complementaria',
         '4'=>'Electiva profesional'
-    ];
-    //$availableCourses = App\Http\Controllers\CRUD\CoursesController::allCourses();
-    //$userRole =  Role::resolveRole(Auth::id()); 
+    ];    
 @endphp
 
 <div style="display: none;" id="precourseSelector">
@@ -21,6 +19,10 @@
         @endphp
     @endisset
 </div>
+
+<script type="text/javascript">
+    var precourseList = [];
+</script>
 
 @if(isset($course))
     {!! Form::hidden('id', $course->id, ['id'=>"course_id"]) !!}
@@ -119,59 +121,65 @@
 </div>
 
 <div class="well">
-    <div class="row" >
-        @isset ($precourseList)
-            @php $precourseCount = 1; @endphp
+    <div class="row" >        
             <div class="col-md-12">
                 <table class="table table-responsive">
+                    @php $precourseCount = 1; @endphp
                     <thead>
                         <th>#</th>
                         <th>Precurso</th>
                         <th>Opciones</th>
                     </thead>
-                    <tbody id="precourses">
-                        @foreach ($precourseList as $precourse)                            
-                            <tr>
-                                <th>
-                                    {{ $precourseCount }}
-                                </th>
-                                <th>                            
-                                    {!! Form::hidden("precourse_id_".$precourseCount, $precourse->id, ["id"=>"precourse_id_".$precourseCount,"style"=>"display:none;"]) !!}
-                                    <label class="control-label">  {{ $precourse->name }} </label>        
-                                </th>
-                                <th>                                    
-                                    <a class="btn btn-danger" onclick="deletePrerequisite('precourse_id_{{$precourseCount}}')">Eliminar prerrequisito</a>
-                                </th>
-                            </tr>                            
-                            @php $precourseCount++ @endphp                        
-                        @endforeach
-                    </tbody>
-                    <script>                                                    
-                        function deletePrerequisite(id){
-                            var prerequisite = $('#'+id).val(); 
-                            var course_id = $('#course_id').val();                             
-                            axios.post('{{ route('deletePrerequisite') }}', {course_id:course_id,prerequisite:prerequisite})
-                            .then(
-                                function (response) {                                                                                
-                                    console.log(response);
-                                    if(response['data']['done']){
-                                        swal("Eliminado con exito","","success").then(function(){location.reload()});
-                                    }else{
-                                        swal("Ha ocurrido un inconveniente","","error").then(function(){location.reload()});
-                                    }                                    
-                                })
-                            .catch(
-                                function (error) {
-                                    console.log(error);
-                                });
-                        }
-                    </script>
+                    @isset ($precourseList)
+                        <tbody id="precourses">
+                            @foreach ($precourseList as $precourse)                            
+                                <tr>
+                                    <th>{{ $precourseCount }}</th>
+                                    <th>
+                                        @php $field = "precourse_id_".$precourseCount; @endphp              
+                                        {!! Form::hidden($field, $precourse->id, ["id"=>$field,"style"=>"display:none;"]) !!}
+                                        {!! Form::hidden($field."_exists", true, ["style"=>"display:none;"]) !!}
+                                        <label class="control-label">  {{ $precourse->name }} </label>
+                                        <script type="text/javascript">
+                                            precourseList.push({{ $precourseCount }});
+                                        </script>
+                                    </th>
+                                    <th>                                    
+                                        <a class="btn btn-danger" onclick="deletePrerequisite('precourse_id_{{$precourseCount}}')">Eliminar prerrequisito</a>
+                                    </th>
+                                </tr>                            
+                                @php $precourseCount++ @endphp                        
+                            @endforeach
+                        </tbody>
+                        <script>                                                    
+                            function deletePrerequisite(id){
+                                var prerequisite = $('#'+id).val(); 
+                                var course_id = $('#course_id').val();                                
+                                axios.post('{{ route('deletePrerequisite') }}', {course_id:course_id,prerequisite:prerequisite})
+                                .then(
+                                    function (response) {
+                                        console.log(response);
+                                        if(response['data']['done']){
+                                            swal("Eliminado con exito","","success").then(function(){location.reload()});
+                                        }else{
+                                            swal("Ha ocurrido un inconveniente","","error").then(function(){location.reload()});
+                                        }                                    
+                                    })
+                                .catch(
+                                    function (error) {
+                                        console.log(error);
+                                    });
+                            }
+                        </script>
+                    @else
+                        <tbody id="precourses">
+                        </tbody>
+                    @endisset
                 </table>
-            </div>
-        @endisset
+            </div>        
     </div>
     <label>Agregar Precurso</label>
-    <label class="form-control" class="btn btn-info" id="addPrecourse">
+    <label class="form-control" class="btn btn-info" onclick="addPrerequisite()">
         <center>
             <span class="glyphicon glyphicon-plus"></span>
         </center>
@@ -179,40 +187,95 @@
 </div>
 
 <script type="text/javascript">
-    var precourseCount = 1;
-    $(document).ready(function() {
-        $("#addPrecourse").click(function(){
-            var selector = $("#precourseSelector").html();            
-            swal({
-              title: '<h3>Seleccione un curso prerrequisito</h3>',
-              type:'info',
-              input: 'select',
-              inputClass:'form-control',
-              inputOptions: precoursesOptions,
-              inputPlaceholder: '',
-              showCancelButton: true,              
-            }).then(function (result) {                
-                if(result.value){
-                    console.log(result);
-                    /*var html = `<div class="col-md-12">
-                                    <label>Precurso ${precourseCount}</label>
-                                    <input type="hidden" name="precourse_id_${precourseCount}" value="${result.value}">
-                                    <label class="control-label form-control">${precoursesOptions[result.value]}</label>
-                                </div>`;*/
-                    var html = `<tr><th>
-                                    ${precourseCount}
-                                    </th>
-                                    <th>
-                                        <input type="hidden" name="precourse_id_${precourseCount}" value="${result.value}" style="display:none;">
-                                        <label class="control-label">${precoursesOptions[result.value]}</label>
-                                    </th>
-                                </tr>`;
-                    $("#precourses").append(html);
-                    precourseCount++;
+    var precourseCount = {{ $precourseCount }};
+    function removePrerequisite(key){
+        var i;
+        for(i=0; i < precourseList.length; i++){
+            if(key === precourseList[i]["key"])
+                break;
+        }
+        //var index = precourseList.indexOf(key);
+        if (precourseList.length>0) {
+          precourseList.splice(i, 1);
+          $("#pre"+key).remove();
+        }
+    }
+    function addPrerequisite(){
+        var selector = $("#precourseSelector").html();
+        swal({
+          title: '<h3>Seleccione un curso prerrequisito</h3>',
+          type:'info',
+          input: 'select',
+          inputClass:'form-control',
+          inputOptions: precoursesOptions,
+          inputPlaceholder: '',
+          showCancelButton: true,
+      }).then(function (result) {
+        if(result.value){
+            var key = precourseList.length;
+            var j, exists=false;
+            for(j=0;j<key;j++){
+                if(precourseList[j]["result"]==result.value){
+                    exists=true;
                 }
-            });
-        });
+            }
+            if(!exists){
+                var toPush = {"key":key,"result":result.value};
+                var i,done=false;
+
+                if(key>0){
+                    if(precourseList[0]["key"]!==0){
+                        key=0;
+                        toPush["key"]=0;
+                        precourseList.splice(0,0,toPush);
+                        done = true;
+                    }
+                }
+
+                if(!done){
+                    for(i=0; i < key-1;i++){
+                        if(precourseList[i+1]["key"]-precourseList[i]["key"] > 1){
+                            key = precourseList[i]["key"]+1;
+                            toPush["key"]=key;
+                            precourseList.splice(i+1,0,toPush);
+                            done=true;
+                            break;
+                        }
+                    }
+                }
+
+                if(!done){
+                    precourseList.push(toPush);
+                }
+                console.log(precourseList);
+
+                $("#precourses").html("");
+                precourseList.forEach(function(item,index){
+                    key = item["key"];
+                    result = item["result"];
+                    var html = `
+                    <tr id="pre${key}">
+                    <th>
+                    ${key+1}
+                    </th>
+                    <th>
+                    <input type="hidden" name="precourse_id_${key+1}" value="${result}" style="display:none;">
+                    <input type="hidden" name="precourse_id_${key+1}_exists" value="0" style="display:none;">
+                    <label class="control-label">${precoursesOptions[result]}</label>
+                    </th>
+                    <th>
+                    <a class="btn btn-warning" onclick="removePrerequisite(${key})">X</a>
+                    </th>
+                    </tr>`;
+                    $("#precourses").append(html);    
+                });
+            }else{
+                swal("Error","El Prerequisito ya existe","error");
+            }
+        }
     });
+  }
+
 </script>
 
 <div class="well">

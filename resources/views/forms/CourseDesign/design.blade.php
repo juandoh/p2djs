@@ -8,8 +8,7 @@
 			<div class="row">
 				<h4 class="col-md-6">Diseño del Curso: {{ $course->name }}</h4>
 				<div class="col-md-6">
-					<div class="btn-group" style="float:right;">
-						<a class="btn btn-success" href="#">Guardar</a>
+					<div class="btn-group" style="float:right;">						
 						<a class="btn btn-warning" href="/home/consultar">Volver</a>
 					</div>
 				</div>
@@ -17,8 +16,8 @@
 		</div>
 		<div class="panel-body">
 			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<script type="text/javascript">
+				<div class="panel-heading"
+>					<script type="text/javascript">
 						var accordionCount = 1;
 						var competenceCount = 1;
 						var competences = [];

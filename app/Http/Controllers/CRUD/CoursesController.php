@@ -217,7 +217,7 @@ class CoursesController extends Controller
 
     //POST
     public function create(Request $request){
-        //dd($request->all());
+        dd($request->all());
 
         $role = Relations::resolveRole(Auth::id());
         if($role == 1 or $role == 2){
@@ -272,6 +272,14 @@ class CoursesController extends Controller
             $id = $data['id'];
 
             if($this->edit($data,$id)){
+                $i=1;
+                while(array_key_exists('precourse_id_'.$i, $data)){
+                    $exists = (bool)$data['precourse_id_'.$i.'_exists'];
+                    if(!$exists){
+                        Relations::bindCoursePrerequisite($id, (int)$data['precourse_id_'.$i]);
+                    }
+                    $i+=1;
+                }
                 alert()->success("Exito!","El Curso ha sido modificado");
                 return redirect('/home/consultar');
             }
@@ -299,9 +307,9 @@ class CoursesController extends Controller
         return redirect("/home/consultar");
     }
 
-    public function deletePrerequisite(Request $request){
-        $data = $request->all();
-        $course_id = $data["course_id"];
+    public function deletePrerequisite(Request $request){        
+        $data = $request->all();        
+        $course_id = $data["course_id"];        
         $prerequiste = $data["prerequisite"];
         $del = Relations::unbindCoursePrerequisite($course_id,$prerequiste);
         return ["done"=>$del];        

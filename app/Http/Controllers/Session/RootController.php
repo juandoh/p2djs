@@ -51,7 +51,7 @@ class RootController extends Controller
                     return redirect()->back();
             
             if (Relations::isAdmin(Auth::id())){
-                $user = User::find($id);
+                $user = User::find($id);                
                 if(!is_null($user))
                     return view('forms.rootUserConfig',['user'=>$user, 'userType'=>$tab,'editing'=>true]);
                 else

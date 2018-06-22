@@ -18,6 +18,10 @@
                     </div>                    
                 @endif
         </div>
+        @else
+            <div class="panel-heading">
+                <a style="min-width: 90px;" onclick="window.history.back()" class="btn btn-success form-control">Volver</a> 
+            </div>
         @endif
         <div class="panel-body">
             @if($master['option']==='register')

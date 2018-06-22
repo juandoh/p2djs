@@ -58,6 +58,7 @@ class RegisterController extends Controller
         'password.min' => "La contraseña debe tener al menos :min caracteres",   
         'program_id.exists'=>"El Programa Academico seleccionado no existe",
         'faculty_id.exists'=>"La Facultad seleccionada no existe",
+        'faculty_id.unique'=>"La Facultad seleccionada ya tiene un decano asignado",
         'password.confirmed'=>'Las contraseñas no coinciden',
     ];
 
@@ -93,25 +94,26 @@ class RegisterController extends Controller
         $user->email = $data['email'];
         $user->password = bcrypt($data['password']);
 
+        $this->updateRole($user_id,$data);
         return $user->save();
     }
 
-    private function updateRole($user_id){
-        if(array_key_exists('role', $data) and array_key_exists('program_id', $data)){
-            $drole=(int)$data['role'];
-            if($drole== 1 or $drole== 2){ //teacher
-                if(Relations::isProgramBinded($user_id)){
-                    UserAcademicProgramRelation::where('user_id',$user_id)->delete();
-                }
-                return Relations::bindUserProgram($user_id, $role, $data['program_id']);                
+    private function updateRole($user_id, $data){
+        if(array_key_exists('role', $data)){
+            $drole=(int)$data['role'];            
+
+            if(Relations::isProgramBinded($user_id)){
+                UserAcademicProgramRelation::where('user_id',$user_id)->delete();                
+            }elseif(Relations::isFacultyBinded($user_id)){
+                UserFacultyRelation::where('user_id',$user_id)->delete();
             }
-        }elseif(array_key_exists('role', $data) and array_key_exists('faculty_id', $data)){
-            if($drole == 3){
-                if(Relations::isFacultyBinded($user_id)){
-                    UserFacultyRelation::where('user_id',$user_id)->delete();
-                }
-                return Relations::bindUserFaculty($user_id, $drole, $data['program_id']);
+            
+            if(array_key_exists('program_id', $data)){
+                return Relations::bindUserProgram($user_id, $drole, $data['program_id']);
             }
+            if(array_key_exists('faculty_id', $data)){
+                return Relations::bindUserFaculty($user_id, $drole, $data['faculty_id']);                
+            }        
         }
         return false;
     }
@@ -169,16 +171,17 @@ class RegisterController extends Controller
         if(Relations::isAdmin(Auth::id())){
             if(array_key_exists('program_id', $data)){
                 $rules['program_id'] = 'required|integer|exists:academic_programs,id';
-            }elseif(array_key_exists('faculty_id', $data)){
-                $rules['faculty_id'] = 'required|integer|exists:faculties,id';
+            }
+            if(array_key_exists('faculty_id', $data)){
+                $rules['faculty_id'] = 'required|integer|exists:faculties,id|unique:user_faculty_relations,faculty_id';
             }
         }
 
         $this->validator($data,$rules)->validate();
-        if($this->update($data)){
+        if($this->update($data)){            
             alert()->success("Exito!","Cambios guardados");
         }else{
-            alert()->error("Error!","Un inconveniente ha ocurrido");            
+            alert()->error("Error!","Un inconveniente ha ocurrido");
         }
 
         return redirect()->back();
