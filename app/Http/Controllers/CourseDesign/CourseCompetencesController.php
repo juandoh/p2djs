@@ -24,7 +24,7 @@ class CourseCompetencesController extends Controller
     //validator messages
     private $messages=[
         'detail.required'=>'La descripción es obligatoria',
-        'detail.max'=>'La descripción no debe ser mayor a 255 caracteres',
+        'max'=>'El atributo no debe contener más de :max caracteres',
         'exists'=>'El curso referenciado no existe',
     ];
 
@@ -78,30 +78,47 @@ class CourseCompetencesController extends Controller
     public function create(Request $request){
         $error = false;
         $data = $request->all();
+        $rules = [
+            'course_id'=>'required|string|exists:courses,id',
+            'name' => 'required|string|max:255',
+            'detail'=>'required|string|max:255',        
+        ];
         //dump($data);
-        dd($data);
-        $validator =$this->validator($data,$this->rules);
-        if($validator->fails()){
+        //dd($data);
+/*
+        $i=1;
+        while(array_key_exists('ra_'.$i, $data)){
+            $rules['ra_'.$i.'_detail'] = "required|string|max:191";
+            $j = 1;
+            while(array_key_exists('ra_'.$i.'_achievement_'.$j, $data)){
+                $rules['ra_'.$i.'_achievement_'.$j.'_detail'] = "required|string|max:191";
+                $j++;
+            }
+            $i++;
+        }*/
+
+        $validator =$this->validator($data,$rules);
+        if($validator->fails()){            
             return redirect()->back()->withErrors($validator)->with(['_old_input'=>$data]);
-        }
+        }        
 
         $competence = ['course_id'=>$data['course_id'], 'name'=> $data['name'],'detail'=>$data['detail']];
         $competenceSave = $this->store($competence);
         if($competenceSave){
             $competence_id = $competenceSave->id;
-            $i=0;
+            $i=1;
             while(array_key_exists('ra_'.$i, $data)){
                 $learningoutcome = ['competence'=>$competence_id, 'name'=>$data['ra_'.$i], 'detail'=>$data['ra_'.$i.'_detail']];
                 $save = LearningOutcomesController::store($learningoutcome);
                 $learning_id = $save->id;
                 if($save){
-                    $j = 0;
+                    $j = 1;
                     while(array_key_exists('ra_'.$i.'_achievement_'.$j, $data)){
-                        $achievement = ['learningO'=>$learning_id,'name'=>$data['ra_'.$i.'_achievement_'.$j],'detail'=>$data['achievement_'.$j.'_detail']];
+                        $achievement = ['learningO'=>$learning_id,'name'=>$data['ra_'.$i.'_achievement_'.$j],'detail'=>$data['ra_'.$i.'_achievement_'.$j.'_detail']];
                         $achievement_save = AchievementIndicatorsController::store($achievement);
                         $j+=1;
                     }
-                    if($j==0){
+                    if($j==1){
                         $error = true;
                     }
                 }
@@ -110,7 +127,7 @@ class CourseCompetencesController extends Controller
                     $save->delete();
                 }
             }
-            if($i==0){
+            if($i==1){
                 $error = true;
             }
         }
