@@ -26,10 +26,11 @@ class CourseCompetencesController extends Controller
         'detail.required'=>'La descripción es obligatoria',
         'max'=>'El atributo no debe contener más de :max caracteres',
         'exists'=>'El curso referenciado no existe',
+        'required'=>"el atributo :attribute es necesario",
     ];
 
-    protected function validator(array $data, $rules){
-        return Validator::make($data, $rules, $this->messages);
+    protected function validator(array $data, $rules, $messages){
+        return Validator::make($data, $rules, $messages);
     }
 
     //Database
@@ -69,7 +70,7 @@ class CourseCompetencesController extends Controller
 
     public function showCreate($id){
         if(Courses::find($id)){
-            $count = CourseCompetences::where("course",$id)->count() +1;
+            $count = CourseCompetences::where("course",$id)->count()+1;
             return view('forms.CourseDesign.competence')->with(['course_id'=>$id,"competence_id"=>$count]);
         }
     }
@@ -83,22 +84,35 @@ class CourseCompetencesController extends Controller
             'name' => 'required|string|max:255',
             'detail'=>'required|string|max:255',        
         ];
+        $messages=[
+            'detail.required'=>'La descripción es obligatoria',
+            'max'=>'El atributo no debe contener más de :max caracteres',
+            'exists'=>'El curso referenciado no existe',
+            'required'=>"el atributo :attribute es necesario",
+        ];
         //dump($data);
         //dd($data);
-/*
+
         $i=1;
         while(array_key_exists('ra_'.$i, $data)){
+            $rules['ra_'.$i] = "required|string|max:191|unique:learning_outcomes,name";
+            $messages['ra_'.$i.'.required'] = "El Nombre del resultado de aprendizaje ".$i." es necesario";
             $rules['ra_'.$i.'_detail'] = "required|string|max:191";
+            $messages['ra_'.$i.'_detail.required'] = "La descripción del resultado de aprendizaje ".$i." es necesaria";
             $j = 1;
             while(array_key_exists('ra_'.$i.'_achievement_'.$j, $data)){
+                $rules['ra_'.$i.'_achievement_'.$j] = "required|string|max:191|unique:achievement_indicators,name";
+                $messages['ra_'.$i.'_achievement_'.$j.".required"] = "El Nombre del indicador de logro ".$i.".".$j." es necesario";
                 $rules['ra_'.$i.'_achievement_'.$j.'_detail'] = "required|string|max:191";
+                $messages['ra_'.$i.'_achievement_'.$j.'_detail.required'] = "La descripción del indicador de logro ".$i.".".$j." es necesario";
+
                 $j++;
             }
             $i++;
-        }*/
+        }
 
-        $validator =$this->validator($data,$rules);
-        if($validator->fails()){            
+        $validator =$this->validator($data,$rules,$messages);        
+        if($validator->fails()){
             return redirect()->back()->withErrors($validator)->with(['_old_input'=>$data]);
         }        
 
@@ -108,13 +122,15 @@ class CourseCompetencesController extends Controller
             $competence_id = $competenceSave->id;
             $i=1;
             while(array_key_exists('ra_'.$i, $data)){
-                $learningoutcome = ['competence'=>$competence_id, 'name'=>$data['ra_'.$i], 'detail'=>$data['ra_'.$i.'_detail']];
+                $detailL = $data['ra_'.$i.'_detail'];
+                $learningoutcome = ['competence'=>$competence_id, 'name'=>$data['ra_'.$i], 'detail'=>(is_null($detailL)?"":$detailL)];
                 $save = LearningOutcomesController::store($learningoutcome);
                 $learning_id = $save->id;
                 if($save){
                     $j = 1;
                     while(array_key_exists('ra_'.$i.'_achievement_'.$j, $data)){
-                        $achievement = ['learningO'=>$learning_id,'name'=>$data['ra_'.$i.'_achievement_'.$j],'detail'=>$data['ra_'.$i.'_achievement_'.$j.'_detail']];
+                        $detailachv = "";$data['ra_'.$i.'_achievement_'.$j.'_detail'];
+                        $achievement = ['learningO'=>$learning_id,'name'=>$data['ra_'.$i.'_achievement_'.$j],'detail'=>(is_null($detailachv)?"":$detailachv)];
                         $achievement_save = AchievementIndicatorsController::store($achievement);
                         $j+=1;
                     }

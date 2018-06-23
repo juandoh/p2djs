@@ -16,7 +16,8 @@
                     $tabs=[
                         'consultar'=>'Consultar Cursos',
                         'crear'=>'Crear Cursos',
-                        'configuracion'=>'Configuración'
+                        'configuracion'=>'Configuración',
+                        'reportes'=>"Reportes de Aplicación" //home/reportes
                     ];
                 @endphp                
                 @include('users.homeTabs')
@@ -43,6 +44,9 @@
                     <div id="menu2" class="tab-pane fade  in active">
                         @include('forms.userConfig', ['user'=>Auth::user()])
                     </div>
+                @endif 
+                @if($tab === 'reportes')
+                    @include('reports.report')
                 @endif
             </div>
         </div>
