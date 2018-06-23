@@ -8,7 +8,7 @@ use App\Http\Controllers\CRUD\CoursesController;
 
 class DocenteController extends Controller
 {   
-    private $tabs = array('consultar','crear','configuracion');
+    private $tabs = array('consultar','crear','configuracion','reportes');
 
     public function index($id)
     {        

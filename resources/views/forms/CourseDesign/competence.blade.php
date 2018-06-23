@@ -213,6 +213,15 @@
 		</h4>
 	</div>
 	<div class="panel-body">
+		@if($errors->any())
+			<div class="alert alert-danger">
+				<ul>
+				@foreach($errors->all() as $error)
+					<li>{{ $error }}</li>
+				@endforeach
+				</ul>
+			</div>
+		@endif
 		<div class="form-group {{ ($errors->has("detail")? " has-error":"") }}">
 			<label>Descripción de la competencia</label>			
 			{!! Form::textarea("detail", old("detail"), ["class"=>"form-control","rows"=>"3"]) !!}

@@ -23,7 +23,7 @@ class SchoolsController extends Controller
     private $messages=[
         'required'=>'Este campo es obligatorio',
         'name.unique'=>'Ya existe una escuela con ese nombre',
-        'exists'=>"La Facultad seleccionada no está registrada en la base de datos",
+        'exists'=>"La escuela seleccionada no está registrada en la base de datos",
         'detail.max'=>'La descripción no debe ser mayor a :max caracteres',
     ];
 
@@ -104,7 +104,7 @@ class SchoolsController extends Controller
         //dd($request->all());
         if(Relations::isAdmin(Auth::id())){
             $rules=[
-                'name'=>'required|string|max:255|exists:schools,name',
+                'name'=>'required|string|max:255',
                 'detail'=>'required|string|max:255'
             ];
             $data = $request->all();

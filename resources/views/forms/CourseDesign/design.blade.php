@@ -39,18 +39,25 @@
 				<div class="panel-group" id="accordion0">
 					@isset ($competences)						
 						@php
-							$competence_count = 0;
+							$competence_count = 1;
 						@endphp
 					    @foreach ($competences as $competence)
 					    	<div class="panel panel-info">
 					    		<div class="panel-heading">
-					    			Competencia {{ $competence_count }}
-					    		</div>
-					    		<div class="panel-body">
-					    			<textarea class="form-control">
-					    				{{ $competence->detail }}
-					    			</textarea>
-					    		</div>
+					    			<div class="row">
+					    				<div class="col-md-8 col-sm-8">
+					    					Competencia {{ $competence_count }}
+					    				</div>
+					    				<div class="col-md-4 col-sm-4">
+					    					<div class="btn-group" style="float:right;">
+					    						<a class="btn btn-info" href="#">Modificar</a>	
+					    						<a class="btn btn-danger" href="#">Elminiar</a>	
+					    					</div>
+					    					
+					    				</div>
+					    			</div>
+					    			
+					    		</div>					    		
 					    	</div>
 					    	@php
 					    		$competence_count++;
