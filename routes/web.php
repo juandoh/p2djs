@@ -41,6 +41,7 @@ Route::get('/user/{id?}','Session\RootController@editUser');
 Route::get('/user/{id?}/{editWhat?}','Session\RootController@editUser');
 
 
+
 $arr = [
     'Faculty'=> 'CRUD\Faculties',
     'School' => 'CRUD\Schools',
@@ -75,3 +76,4 @@ Route::post('/save_competence', 'CourseDesign\CourseCompetencesController@create
 Route::get('/post','Testing\PostController@show')->name('post');
 Route::post('/post','Testing\PostController@store');
 Route::get('/post/input','Testing\PostController@input');
+Route::get('/info/course/{id}/getPDF', 'ReportController@getPDF'); 

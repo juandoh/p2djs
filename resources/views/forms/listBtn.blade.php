@@ -6,6 +6,9 @@
         <div class="btn-group">
             <a class="btn btn-primary" href="{{ '/info/course/'.$id  }}" style="min-width:60px;">Ver Diseño</a>
         </div>
+        <div class="btn-group">
+            <a class="btn btn-primary" href="{{ '/info/course/'.$id .'/getPDF' }}" style="min-width:60px;">Reporte</a>
+        </div>
     @else
     <div class="btn-group btn-group-justified" style="max-width: 200px;min-width:200px;">
         @isset ($userTypeTab)
