@@ -12,12 +12,14 @@
         @endif
 
         @if(isset($tab))
-            <?php $tabs=[
+            @php
+            $tabs=[
                 'consultar'=>'Consultar Usuarios',
                 'crear/docente'=>'Crear Usuarios',
                 'facultades'=>'Manejo de Facultades',
                 'escuelas'=>'Manejo de Escuelas'
-            ];?>
+            ];
+            @endphp
             
             @include('users.homeTabs')             
             
@@ -34,7 +36,6 @@
                     <div class="panel panel-success">
                         <div class="panel-heading"><h4>Crear Usuario</h4></div>
                         <div class="panel-body">
-
                             {!! Form::open(['route'=>'register','class'=>'form-horizontal']) !!}
                             @include('fields.CRUD.user')
                             <div class="form-group">

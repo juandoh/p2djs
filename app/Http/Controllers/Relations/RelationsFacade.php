@@ -52,7 +52,7 @@ class RelationsFacade extends Facade {
 		return -1;
 	}
 
-	public static function getRelationHookName($user_id){
+	public static function relationTree($user_id){
 		/*$faculty_id = UserFacultyRelation::where('user_id',$user_id)->first();
 		if($faculty_id){
 			$faculty = Faculties::find(faculty_id);

@@ -24,7 +24,7 @@ class CoursesController extends Controller
         'credits'=>'required|integer|min:2',
         'mhours'=>'required|integer|min:1',
         'ihours'=>'required|integer|min:1',
-        'ctype'=>'required|integer|min:1|max:4',        
+        'ctype'=>'required|integer|min:1|max:4',
         'valuable'=>'boolean',
         'qualifiable'=>'boolean',
         'program_id'=>'required|exists:academic_programs,id|min:1',
@@ -52,15 +52,15 @@ class CoursesController extends Controller
     //Database
     private function store(array $data){
         /*
-            "name", "credits", "mhours", "ihours", "ctype", 
+            "name", "credits", "mhours", "ihours", "ctype",
             "precourses", "valuable", "qualifiable" ,"program_id"
         */
         return Courses::create([
             "name" => $data['name'],
-            "credits" => $data['credits'], 
+            "credits" => $data['credits'],
             "mhours" => (int)$data['mhours'], //magistral hours
             "ihours" => (int)$data['ihours'], //independent hours
-            "ctype" =>  (int)$data['ctype'],  //course type            
+            "ctype" =>  (int)$data['ctype'],  //course type
             "valuable" => (bool)$data['valuable'],    //
             "qualifiable" => (bool)$data['qualifiable'], //
             "program_id" => (int)$data['program_id'],
@@ -80,9 +80,9 @@ class CoursesController extends Controller
             $course->credits = $data['credits'];
             $course->mhours = $data['mhours'];
             $course->ihours = $data['ihours'];
-            $course->ctype = $data['ctype'];            
+            $course->ctype = $data['ctype'];
             $course->valuable = $data['valuable'];
-            $course->qualifiable = $data['qualifiable'];        
+            $course->qualifiable = $data['qualifiable'];
             return $course->save();
         }
         return false;
@@ -93,7 +93,7 @@ class CoursesController extends Controller
     }
 
     public static function allTeacherCourses(){
-        return Courses::where('created_by',Auth::id())->paginate(10);        
+        return Courses::where('created_by',Auth::id())->paginate(10);
     }
 
     public static function paginateCourses(){
@@ -103,7 +103,7 @@ class CoursesController extends Controller
     //REST FUNCTIONS
     //GET
     public function showEdit($id){
-        if(!is_null($id)){            
+        if(!is_null($id)){
             $course = Courses::find($id);
             //dd($program);
             if(!$course){
@@ -148,14 +148,14 @@ class CoursesController extends Controller
                 'fields'=>'courses',
                 'object'=>'course'
             ])
-            ->withData($course);            
+            ->withData($course);
             else
                 return redirect('/home/consultar');
         }
     }
 
     public function showDesigner($id){
-        if(!is_null($id)){            
+        if(!is_null($id)){
             if (Relations::isTeacher(Auth::id())) {
                 $course = Courses::find($id);
                 if(!$course){
@@ -248,10 +248,10 @@ class CoursesController extends Controller
             //dd(User::find($id)->trashed());
             if(Relations::isProgramBinded(Auth::id())){
                 if(Courses::find($id)->delete()){
-                    alert()->success("Exito!","El Curso ha sido eliminado");                    
+                    alert()->success("Exito!","El Curso ha sido eliminado");
                     return redirect("/home/consultar");
-                }else{    
-                    alert()->error("Error!","El Curso no pudo eliminarse");               
+                }else{
+                    alert()->error("Error!","El Curso no pudo eliminarse");
                     return redirect("/home/consultar");
                 }
             }else{
@@ -261,11 +261,11 @@ class CoursesController extends Controller
         return redirect("/home/consultar");
     }
 
-    public function deletePrerequisite(Request $request){        
-        $data = $request->all();        
-        $course_id = $data["course_id"];        
+    public function deletePrerequisite(Request $request){
+        $data = $request->all();
+        $course_id = $data["course_id"];
         $prerequiste = $data["prerequisite"];
         $del = Relations::unbindCoursePrerequisite($course_id,$prerequiste);
-        return ["done"=>$del];        
+        return ["done"=>$del];
     }
 }

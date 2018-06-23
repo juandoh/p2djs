@@ -38,7 +38,7 @@ class SchoolsController extends Controller
             'detail'=>$data['detail']
         ]);
     }
-    
+
     private function edit(array $data,$id){
         $school = Schools::find($id);
         if($school){
@@ -53,7 +53,7 @@ class SchoolsController extends Controller
         return Schools::all();
     }
 
-    
+
     public static function paginateSchools(){
         if(Relations::isAdmin(Auth::id()))
             return Schools::withTrashed()->paginate(10);
@@ -126,7 +126,7 @@ class SchoolsController extends Controller
                 if(Schools::find($id)->delete()){
                     alert()->success("Exito!","La Escuela ha sido eliminada");
                 }else{
-                    alert()->error("Error!","La Escuela no pudo eliminarse");                    
+                    alert()->error("Error!","La Escuela no pudo eliminarse");
                 }
             }else{
                 alert()->error("Error","Su cuenta no tiene el rol permitido para ejecutar esta acción");
@@ -139,12 +139,12 @@ class SchoolsController extends Controller
         if(!is_null($id)){
             if(Relations::isAdmin(Auth::id())){
                 $school = Schools::onlyTrashed()->where('id',$id);
-                
+
                 if($school->restore()){
                     alert()->success('Exito!','La Escuela se ha restaurado');
                 }else{
                     alert()->error("Error!","Un inconveniente ha ocurrido");
-                }             
+                }
             }else{
                 alert()->error("Error","Su cuenta no tiene el rol permitido para ejecutar esta acción");
             }
@@ -152,4 +152,3 @@ class SchoolsController extends Controller
         return redirect()->back();
     }
 }
-
