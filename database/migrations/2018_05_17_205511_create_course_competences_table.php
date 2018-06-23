@@ -17,7 +17,7 @@ class CreateCourseCompetencesTable extends Migration
             //id,course,name,detail      
             $table->increments('id');
             $table->integer('course')->unsigned()->index();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('detail');            
             $table->timestamps();
             $table->foreign('course')->references('id')->on('courses')->onDelete('cascade');

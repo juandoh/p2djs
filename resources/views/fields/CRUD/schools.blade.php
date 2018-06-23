@@ -8,7 +8,7 @@
     {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'name')}}
 </div>
 <div class="well">
-	@include('fields.CRUD.facultySelector')	
+	@include('fields.CRUD.facultySelector',['value'=>$school->faculty])
 </div>
 
 <div class="form-group{{ $errors->has('detail') ? ' has-error' : '' }}">
