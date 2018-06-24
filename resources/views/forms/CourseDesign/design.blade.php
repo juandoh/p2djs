@@ -26,48 +26,52 @@
                             <div class="row">
                                 <div class="col-md-8 col-sm-9 col-xs-9">
                                     <label class="control-label" style="padding-top: 5px;">
-                                        Competencias
+                                        <h4>Competencias</h4>
                                     </label>
                                 </div>
                                 <div class="col-md-4 col-sm-3 col-xs-3">
-                                    <a class="btn btn-default" style="float:right;" id="addCompetence"
+                                    <a class="btn btn-default btn-lg" style="float:right;" id="addCompetence"
                                        href="/design/course/{{ $course->id }}/new">
                                         Agregar Competencia
                                     </a>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="panel-group" id="accordion0">
-                            @isset ($competences)
-                                @php
-                                    $competence_count = 1;
-                                @endphp
-                                @foreach ($competences as $competence)
-                                    <div class="panel panel-info">
-                                        <div class="panel-heading">
-                                            <div class="row">
-                                                <div class="col-md-8 col-sm-8">
-                                                    <h4>
-                                                        Competencia {{ $competence_count }}
-                                                    </h4>
-                                                </div>
-                                                <div class="col-md-4 col-sm-4">
-                                                    <div class="btn-group" style="float:right;">
-                                                        <a class="btn btn-info" href="#">Modificar</a>
-                                                        <a class="btn btn-danger" href="#">Elminiar</a>
+                        <div class="panel-body">
+                            <div class="panel-group" id="accordion0">
+                                @isset ($competences)
+                                    @if(!count($competences))
+                                        <div class="panel panel-warning">
+                                            <div class="panel-heading">
+                                                <h4>No hay competencias a mostrar</h4>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    @foreach ($competences as $competence)
+                                        <div class="panel panel-info">
+                                            <div class="panel-heading">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-7 col-xs-7">
+                                                        <h4>
+                                                            <label>
+                                                            {{ $competence->name }}:
+                                                            </label>
+                                                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $competence->detail }}</div>
+                                                        </h4>
                                                     </div>
+                                                    <div class="col-md-6 col-sm-5">
+                                                        <div class="btn-group btn-group-lg" style="float:right; padding-top: 10px;">
+                                                            <a class="btn btn btn-info" href="#">Modificar</a>
+                                                            <a class="btn btn-danger" href="#">Eliminar</a>
+                                                        </div>
 
+                                                    </div>
                                                 </div>
                                             </div>
-
                                         </div>
-                                    </div>
-                                    @php
-                                        $competence_count++;
-                                    @endphp
-                                @endforeach
-                            @endisset()
+                                    @endforeach
+                                @endisset()
+                            </div>
                         </div>
                     </div>
                 </div>

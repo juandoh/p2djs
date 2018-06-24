@@ -161,8 +161,9 @@ class CoursesController extends Controller
                 if(!$course){
                     alert()->info('Información','El Curso no se puede modificar dada su inhabilidad, no existe, ó no lo tiene asignado');
                 }else{
+                    $competences = CourseCompetencesController::listCompetences((int)$id);
                     return view('forms.CourseDesign.design',['course'=>$course])
-                    ->withCompetences(CourseCompetencesController::listCompetences((int)$id));
+                    ->withCompetences($competences);
                 }
             }
             return redirect('/home/consultar');

@@ -84,7 +84,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-lg-12 col-md-8 col-lg-offset-0 col-md-offset-2">
+            <div class="col-lg-12 col-md-10 col-lg-offset-0 col-md-offset-1">
                 @yield('content')
             </div>
         </div>
