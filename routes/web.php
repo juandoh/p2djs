@@ -76,4 +76,8 @@ Route::post('/save_competence', 'CourseDesign\CourseCompetencesController@create
 Route::get('/post','Testing\PostController@show')->name('post');
 Route::post('/post','Testing\PostController@store');
 Route::get('/post/input','Testing\PostController@input');
+<<<<<<< HEAD
 Route::get('/info/course/{id}/getPDF', 'Reports\ReportController@getPDF'); 
+=======
+Route::get('/info/course/{id}/getPDF', 'Reports\ReportController@getPDF');
+>>>>>>> 5b82cb85a4a7bc500cf84db30627bc0894bb753c
