@@ -103,10 +103,14 @@ class CourseCompetencesController extends Controller
 
         $i = 1;
         while (array_key_exists('ra_' . $i, $data)) {
-            $rules['ra_' . $i] = "required|string|max:191|unique:learning_outcomes,name";
-            $messages['ra_' . $i . '.required'] = "El Nombre del resultado de aprendizaje " . $i . " es necesario";
+            #Rules
+            $rules['ra_' . $i] = "required|string|max:191";
             $rules['ra_' . $i . '_detail'] = "required|string|max:191";
+            #Messages
+            $messages['ra_' . $i . '.required'] = "El Nombre del resultado de aprendizaje " . $i . " es necesario";
             $messages['ra_' . $i . '_detail.required'] = "La descripción del resultado de aprendizaje " . $i . " es necesaria";
+
+
             $j = 1;
             while (array_key_exists('ra_' . $i . '_achievement_' . $j, $data)) {
                 $rules['ra_' . $i . '_achievement_' . $j] = "required|string|max:191|unique:achievement_indicators,name";
@@ -116,11 +120,24 @@ class CourseCompetencesController extends Controller
 
                 $j++;
             }
+            if ($j == 1) {
+                $error = true;
+                break;
+            }
             $i++;
+        }
+        if($i==1){
+            $error = true;
+        }
+
+        if ($error) {
+            alert()->html("Error!", "<h4>Por cada competencia debe haber al menos 1 resultado de aprendizaje, y por cada resultado de aprendizaje debe haber al menos 1 indicador de logro</h4>", "error")->showCancelButton("Cerrar");
+            return redirect()->back()->with(['_old_input' => $data]);
         }
 
         $validator = $this->validator($data, $rules, $messages);
         if ($validator->fails()) {
+            dd($validator);
             return redirect()->back()->withErrors($validator)->with(['_old_input' => $data]);
         }
 
@@ -143,9 +160,7 @@ class CourseCompetencesController extends Controller
                         $achievement_save = AchievementIndicatorsController::store($achievement);
                         $j += 1;
                     }
-                    if ($j == 1) {
-                        $error = true;
-                    }
+
                 }
                 $i += 1;
                 if ($error) {
@@ -156,13 +171,8 @@ class CourseCompetencesController extends Controller
                 $error = true;
             }
         }
-        if ($error) {
-            $competenceSave->delete();
-            alert()->html("Error!", "<h4>Por cada competencia debe haber al menos 1 resultado de aprendizaje, y por cada resultado de aprendizaje debe haber al menos 1 indicador de logro</h4>", "error")->showCancelButton("Cerrar");
-            return redirect()->back()->with(['_old_input' => $data]);
-        } else {
-            alert()->success("Exito!", "Se ha registrado correctamente la competencia");
-        }
+
+        alert()->success("Exito!", "Se ha registrado correctamente la competencia");
         return redirect()->back();
     }
 
