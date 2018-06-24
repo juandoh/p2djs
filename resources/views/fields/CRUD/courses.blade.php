@@ -57,7 +57,7 @@
     </div>
 </div>
 
-<div class="form-group col-md-offset-1 {{ $errors->has('weekHours') ? ' has-error' : '' }}">
+<div class="form-group col-md-offset-0 {{ $errors->has('weekHours') ? ' has-error' : '' }}">
     {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'weekHours')}}
 </div>
 <div class="row">
@@ -74,13 +74,12 @@
                                 {{ Form::radio('ctype',$val) }}
                             @endif
                         @else
-                            @if (old('ctype')==(int)$val)
+                            @if(is_null(old('ctype')))
+                                {{ Form::radio('ctype',$val, ((((int)$val)==1)?true:false)) }}
+                            @elseif( ((int)old("ctype"))== $val )
                                 {{ Form::radio('ctype',$val, true) }}
                             @else
                                 {{ Form::radio('ctype',$val) }}
-                            @endif
-                            @if(is_null(old('ctype')))
-                                {{ Form::radio('ctype',$val, ((((int)$val)==1)?true:false)) }}
                             @endif
                         @endif
                         {{ $opt }}

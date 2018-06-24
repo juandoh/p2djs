@@ -95,6 +95,10 @@ class RelationsFacade extends Facade {
 		return $relation->save();		
 	}
 
+	public static function unbindUserFaculty($user_id){
+        return UserFacultyRelation::where('user_id',$user_id)->delete();
+    }
+
 	public static function bindUserProgram($user_id,$role,$program_id){
 		$relation = new UserAcademicProgramRelation;
 		$relation->user_id = $user_id;
@@ -103,6 +107,10 @@ class RelationsFacade extends Facade {
 
 		return $relation->save();		
 	}
+
+    public static  function unbindUserProgram($user_id){
+        return UserAcademicProgramRelation::where('user_id',$user_id)->delete();
+    }
 
 	public static function isFacultyBinded($user_id){
 		$faculty = UserFacultyRelation::where('user_id',$user_id)->first();

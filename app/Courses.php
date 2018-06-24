@@ -41,7 +41,6 @@ class Courses extends Model
     }
 
     public function competences(){
-        return $this->hasMany('App\CourseCompetences');
+        return $this->hasMany('App\CourseCompetences' ,'course', 'id');
     }
-
 }

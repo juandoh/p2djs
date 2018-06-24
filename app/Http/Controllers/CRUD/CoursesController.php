@@ -161,8 +161,9 @@ class CoursesController extends Controller
                 if(!$course){
                     alert()->info('Información','El Curso no se puede modificar dada su inhabilidad, no existe, ó no lo tiene asignado');
                 }else{
-                    $competences = CourseCompetencesController::listCompetences((int)$id);
-                    return view('forms.CourseDesign.design',['course'=>$course])
+                    $competences = $course->competences()->get();
+                    return view('forms.CourseDesign.design')
+                    ->withCourse($course)
                     ->withCompetences($competences);
                 }
             }
@@ -172,7 +173,7 @@ class CoursesController extends Controller
 
     //POST
     public function create(Request $request){
-        dd($request->all());
+        //dd($request->all());
 
         $role = Relations::resolveRole(Auth::id());
         if($role == 1 or $role == 2){
@@ -184,7 +185,7 @@ class CoursesController extends Controller
             $weekHours = $credits*3;
             if($mhours+$ihours != $weekHours or $mhours>$ihours){
                 return redirect()->back()->withErrors(new MessageBag([
-                    'weekHours'=>'Las horas magistrales e individuales deben sumar: '.$weekHours.'<br>Nota: Las horas magistrales deben ser menor a las horas de trabajo individual'
+                    'weekHours'=>'Las horas magistrales e individuales deben sumar: '.$weekHours.' horas semanales (#creditos x 3)'
                 ]))->with(['_old_input'=>$data]);
             }
 

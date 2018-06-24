@@ -10,7 +10,7 @@ class AchievementIndicators extends Model
     protected $table='achievement_indicators';
     protected $fillable = ['learningO','name','detail'];
 
-    public function learningO(){
+    public function learning_outcomes(){
         return $this->belongsTo('App\LearningOutcomes','id','learningO');
     }
 }

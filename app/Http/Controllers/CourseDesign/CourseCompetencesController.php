@@ -67,10 +67,6 @@ class CourseCompetencesController extends Controller
 
     //REST FUNCTIONS
     //GET
-    public function showEdit()
-    {
-
-    }
 
     public function showCreate($id)
     {
@@ -78,6 +74,43 @@ class CourseCompetencesController extends Controller
             $count = CourseCompetences::where("course", $id)->count() + 1;
             return view('forms.CourseDesign.competence')->with(['course_id' => $id, "competence_id" => $count]);
         }
+    }
+
+    public function showEdit($id, $competence_id)
+    {
+        $fmt_data = array();
+        $course = Courses::find($id);
+        //Get the competence
+        $competence = $course->competences()->where("id",$competence_id)->first();
+        $fmt_data["name"] = $competence->name;
+        $fmt_data["detail"] = $competence->detail;
+        //get the learning outcomes
+        $learning_outcomes = $competence->learning_outcomes()->get();
+
+        $i=1;
+        foreach($learning_outcomes as $learning_outcome){
+            // ra_id, ra_id_detail, ra_id_achievement_
+            $fmt_data["ra_".$i."_id"] = $learning_outcome->id;
+            $fmt_data["ra_".$i] = $learning_outcome->name;
+            $fmt_data["ra_".$i."_detail"] = $learning_outcome->detail;
+
+            $learning_indicators = $learning_outcome->indicators()->get();
+            $j=1;
+            foreach($learning_indicators as $learning_indicator){
+                $fmt_data["ra_".$i."_achievement_".$j."_id"] = $learning_indicator->id;
+                $fmt_data["ra_".$i."_achievement_".$j] = $learning_indicator->name;
+                $fmt_data["ra_".$i."_achievement_".$j] = $learning_indicator->name;
+                $fmt_data["ra_".$i."_achievement_".$j."_detail"] = $learning_indicator->detail;
+                $j++;
+            }
+            $i++;
+        }
+        //dd(["competence_id"=>$competence_id, "_old_input"=>$fmt_data]);
+        return view('forms.CourseDesign.competence')
+            ->with(['course_id' => $id,
+                    "competence_id" => $competence_id,
+                    "edit_data" => $fmt_data
+                ]);
     }
 
     //POST
@@ -97,7 +130,7 @@ class CourseCompetencesController extends Controller
             'required' => "el atributo :attribute es necesario",
         ];
         //dump($data);
-        //dd($data);
+        dd($data);
 
         $i = 1;
         while (array_key_exists('ra_' . $i, $data)) {
@@ -111,7 +144,7 @@ class CourseCompetencesController extends Controller
             $j = 1;
             while (array_key_exists('ra_' . $i . '_achievement_' . $j, $data)) {
                 #Rules
-                $rules['ra_' . $i . '_achievement_' . $j] = "required|string|max:191|unique:achievement_indicators,name";
+                $rules['ra_' . $i . '_achievement_' . $j] = "required|string|max:191";
                 $rules['ra_' . $i . '_achievement_' . $j . '_detail'] = "required|string|max:191";
                 #Messages
                 $messages['ra_' . $i . '_achievement_' . $j . ".required"] = "El Nombre del indicador de logro " . $i . "." . $j . " es necesario";
@@ -140,11 +173,12 @@ class CourseCompetencesController extends Controller
         }
 
         if ($validator_fails) {
+            //dd($validator);
             return redirect()->back()->withErrors($validator)->with(['_old_input' => $data]);
         }
 
-        return redirect()->back()->with(['_old_input'=>$data]);
-        dd($data);
+        //return redirect()->back()->with(['_old_input'=>$data]);
+        //dd($data);
 
         $competence = ['course_id' => $data['course_id'], 'name' => $data['name'], 'detail' => $data['detail']];
         $competenceSave = $this->store($competence);
@@ -159,20 +193,13 @@ class CourseCompetencesController extends Controller
                 if ($save) {
                     $j = 1;
                     while (array_key_exists('ra_' . $i . '_achievement_' . $j, $data)) {
-                        $detailachv = "";
-                        $data['ra_' . $i . '_achievement_' . $j . '_detail'];
+                        $detailachv = $data['ra_' . $i . '_achievement_' . $j . '_detail'];
                         $achievement = ['learningO' => $learning_id, 'name' => $data['ra_' . $i . '_achievement_' . $j], 'detail' => (is_null($detailachv) ? "" : $detailachv)];
-                        $achievement_save = AchievementIndicatorsController::store($achievement);
+                        AchievementIndicatorsController::store($achievement);
                         $j += 1;
                     }
                 }
                 $i += 1;
-                if ($error) {
-                    $save->delete();
-                }
-            }
-            if ($i == 1) {
-                $error = true;
             }
         }
 

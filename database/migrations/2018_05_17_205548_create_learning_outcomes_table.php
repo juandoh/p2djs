@@ -17,7 +17,7 @@ class CreateLearningOutcomesTable extends Migration
             //id,competence,name,detail
             $table->increments('id');            
             $table->integer('competence')->unsigned()->index();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('detail');            
             $table->timestamps();            
             $table->foreign('competence')->references('id')->on('course_competences')->onDelete('cascade');
