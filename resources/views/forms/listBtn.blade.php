@@ -3,11 +3,12 @@
 <?php if(!isset($directorCourseView)) $directorCourseView=false;?>
 <?php if(!isset($courseDesign)) $courseDesign=false;?>
     @if($deanCourseView)
-        <div class="btn-group">
+        <div class="btnn-group">
             <a class="btn btn-primary" href="{{ '/info/course/'.$id  }}" style="min-width:60px;">Ver Diseño</a>
         </div>
         <div class="btn-group">
-            <a class="btn btn-primary" href="{{ '/info/course/'.$id .'/getPDF' }}" style="min-width:60px;">Reporte</a>
+            <a class="btn btn-primary" href="{{ '/info/course/'.$id .'/getPDF' }}" target=_blank style="min-width:60px;">Reporte  de Curso
+            </a>
         </div>
     @else
     <div class="btn-group btn-group-justified" style="max-width: 200px;min-width:200px;">
