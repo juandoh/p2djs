@@ -7,9 +7,8 @@
     if(isset($relation)){
         if(!is_null($relation->faculty_id))
             $value=$relation->faculty_id;
-        else
-            $value = -1;
-    }else{
+    }
+    if(!isset($value)){
         $value = -1;
     }
 @endphp

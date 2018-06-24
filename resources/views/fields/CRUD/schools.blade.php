@@ -1,6 +1,6 @@
-@if(isset($school))
+@isset($school)
     <input type="hidden" name="id" value="{{ $school->id }}"/>
-@endif
+@endisset
 <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
     {{ Form::label('name', 'Nombre de la Escuela', ['class'=>'control-label']) }}        
     {{ Form::text('name', (isset($school)?$school->name:old('name')), ['class'=>'form-control','required'=>'']) }}
@@ -8,7 +8,12 @@
     {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'name')}}
 </div>
 <div class="well">
-	@include('fields.CRUD.facultySelector')	
+    @isset($school)
+        @include('fields.CRUD.facultySelector',['value'=>$school->faculty])
+    @else
+        @include('fields.CRUD.facultySelector')
+    @endisset
+
 </div>
 
 <div class="form-group{{ $errors->has('detail') ? ' has-error' : '' }}">

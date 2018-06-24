@@ -10,11 +10,11 @@ class CourseCompetences extends Model
     protected $table="course_competences";
     protected $fillable = ['course','name','detail'];
 
-    public function course(){
+    public function course_join(){
         return $this->belongsTo('App\Courses','id','course');
     }
 
-    public function learningO(){
-        return $this->hasMany('App\LearningOutcomes');
+    public function learning_outcomes(){
+        return $this->hasMany('App\LearningOutcomes', 'competence', 'id');
     }
 }

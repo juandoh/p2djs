@@ -70,7 +70,10 @@ Route::get('/info/course/{id}','CRUD\CoursesController@showInfo');
 Route::post('/deletePrerequisite','CRUD\CoursesController@deletePrerequisite')->name("deletePrerequisite");
 
 Route::get('/design/course/{id}/new', 'CourseDesign\CourseCompetencesController@showCreate');
+Route::get('/design/course/{id}/edit_competence/{competence_id}', 'CourseDesign\CourseCompetencesController@showEdit');
 Route::post('/save_competence', 'CourseDesign\CourseCompetencesController@create');
+Route::post('/update_competence', 'CourseDesign\CourseCompetencesController@create');
+Route::post('/delete_competence', 'CourseDesign\CourseCompetencesController@create');
 
 //##########################################TEST################
 Route::get('/post','Testing\PostController@show')->name('post');

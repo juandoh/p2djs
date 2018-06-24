@@ -36,7 +36,7 @@ class FacultiesController extends Controller
             'detail'=>$data['detail']
         ]);
     }
-    
+
     private function edit(array $data,$id){
         $faculty = Faculties::find($id);
         if($faculty){
@@ -47,7 +47,7 @@ class FacultiesController extends Controller
         return false;
     }
 
-    public static function allFaculties(){        
+    public static function allFaculties(){
         return Faculties::all();
     }
 
@@ -139,12 +139,12 @@ class FacultiesController extends Controller
         if(!is_null($id)){
             if(Relations::isAdmin(Auth::id())){
                 $faculty = Faculties::onlyTrashed()->where('id',$id);
-                
+
                 if($faculty->restore()){
                     alert()->success('Exito!','La Facultad se ha restaurado');
                 }else{
                     alert()->error("Error!","Un inconveniente ha ocurrido");
-                }             
+                }
             }else{
                 alert()->error("Error","Su cuenta no tiene el rol permitido para ejecutar esta acción");
             }

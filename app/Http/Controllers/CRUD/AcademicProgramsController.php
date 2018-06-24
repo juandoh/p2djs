@@ -30,7 +30,7 @@ class AcademicProgramsController extends Controller
         'exists'=>'La Escuela seleccionada no se encuentra en la base de datos',
     ];
 
-    protected function validator(array $data, $rules){
+    protected function validator(array $data, $rules){        
         return Validator::make($data, $rules, $this->messages);
     }
 
@@ -46,7 +46,7 @@ class AcademicProgramsController extends Controller
     protected function edit(array $data){
         $id = $data['id'];
         $ap = AcademicPrograms::find($id);
-        
+
         if($ap){
             $ap->name = $data['name'];
             $ap->school = $data['school'];
@@ -57,7 +57,7 @@ class AcademicProgramsController extends Controller
         return false;
     }
 
-    public function showEdit($id){        
+    public function showEdit($id){
         if(!is_null($id)){
             $role = Relations::resolveRole(Auth::id());
             $program = AcademicPrograms::find($id);
@@ -82,7 +82,7 @@ class AcademicProgramsController extends Controller
 
 
     public static function allPrograms(){
-        return AcademicPrograms::all();  
+        return AcademicPrograms::all();
     }
 
     public static function paginatePrograms(){
@@ -90,7 +90,7 @@ class AcademicProgramsController extends Controller
             return AcademicPrograms::withTrashed()->paginate(10);
         return AcademicPrograms::paginate(10);
     }
-    
+
     //REST FUNCTIONS
     public function create(Request $request){
         //dd($request->all());
@@ -102,7 +102,7 @@ class AcademicProgramsController extends Controller
                 alert()->success("Exito!","Programa Académico registrado");
                 return redirect()->back();
             }
-        }   
+        }
         alert()->error("Error!","Un inconveniente ha ocurrido");
         return redirect()->back();
     }
@@ -119,7 +119,7 @@ class AcademicProgramsController extends Controller
                 alert()->success("Exito!","El Programa Académico ha sido modificado");
                 return redirect()->back();
             }
-        }   
+        }
         alert()->error("Error!","Un inconveniente ha ocurrido");
         return redirect()->back();
     }
@@ -131,8 +131,8 @@ class AcademicProgramsController extends Controller
             if($role == 3 or $role==0){
                 if(AcademicPrograms::find($id)->delete()){
                     alert()->success("Exito!","El Programa Academico ha sido eliminado. Recuerde que debido a dependencias solo se desactiva");
-                }else{                    
-                    alert()->error("Error!","");                    
+                }else{
+                    alert()->error("Error!","");
                 }
             }else{
                 alert()->error("Error","Su cuenta no tiene el rol permitido para ejecutar esta acción");
@@ -140,17 +140,17 @@ class AcademicProgramsController extends Controller
         }
         return redirect()->back();
     }
-    
+
     public function enable($id = null){
         if(!is_null($id)){
             if(Relations::isDean(Auth::id())){
                 $program = AcademicPrograms::onlyTrashed()->where('id',$id);
-                
+
                 if($program->restore()){
                     alert()->success('Exito!','El Programa Academico se ha restaurado');
                 }else{
                     alert()->error("Error!","Un inconveniente ha ocurrido");
-                }             
+                }
             }else{
                 alert()->error("Error","Su cuenta no tiene el rol permitido para ejecutar esta acción");
             }

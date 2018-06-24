@@ -17,7 +17,7 @@ class CreateAchievementIndicatorsTable extends Migration
             //id,learningO,name,detail
             $table->increments('id');            
             $table->integer('learningO')->unsigned()->index();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('detail');            
             $table->timestamps();            
             $table->foreign('learningO')->references('id')->on('learning_outcomes')->onDelete('cascade');

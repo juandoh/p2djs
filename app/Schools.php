@@ -18,7 +18,7 @@ class Schools extends Model
         return $this->hasMany('App\AcademicPrograms');
     }
 
-    public function faculty(){
+    public function facultyR(){
         return $this->hasOne('App\Faculties','id','faculty');
     }
 }

@@ -10,11 +10,11 @@ class LearningOutcomes extends Model
     protected $table = "learning_outcomes";
     protected $fillable = ['competence','name','detail'];
 
-    public function competence(){
+    public function competence_join(){
         return $this->belongsTo('App\CourseCompetences','id','competence');
     }
 
     public function indicators(){
-        return $this->hasMany('App\AchievementIndicators');
+        return $this->hasMany('App\AchievementIndicators', 'learningO','id');
     }
 }
