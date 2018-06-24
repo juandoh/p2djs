@@ -16,8 +16,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="panel panel-primary">
-                        <div class="panel-heading"
-                        >
+                        <div class="panel-heading">
                             <script type="text/javascript">
                                 var accordionCount = 1;
                                 var competenceCount = 1;
@@ -54,17 +53,17 @@
                                                     <div class="col-md-6 col-sm-7 col-xs-7">
                                                         <h4>
                                                             <label>
-                                                            {{ $competence->name }}:
+                                                                {{ $competence->name }}:
                                                             </label>
                                                             <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $competence->detail }}</div>
                                                         </h4>
                                                     </div>
                                                     <div class="col-md-6 col-sm-5">
-                                                        <div class="btn-group btn-group-lg" style="float:right; padding-top: 10px;">
+                                                        <div class="btn-group btn-group-lg"
+                                                             style="float:right; padding-top: 10px;">
                                                             <a class="btn btn btn-info" href="#">Modificar</a>
                                                             <a class="btn btn-danger" href="#">Eliminar</a>
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </div>

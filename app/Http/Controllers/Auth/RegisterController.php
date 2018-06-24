@@ -85,7 +85,6 @@ class RegisterController extends Controller
     {        
         $user_id = $data['id'];
         $user = User::find($user_id);
-        //dd($user);
         if(is_null($user))
             return false;
 
@@ -94,7 +93,9 @@ class RegisterController extends Controller
         $user->email = $data['email'];
         $user->password = bcrypt($data['password']);
 
-        $this->updateRole($user_id,$data);
+        if(!$this->updateRole($user_id,$data))
+            return false;
+
         return $user->save();
     }
 

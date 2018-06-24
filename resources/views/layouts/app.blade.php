@@ -10,9 +10,11 @@
 
     <title>Diseño de Cursos</title>
 
-<!-- Styles
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">-->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!--Styles
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!--<link href="{{ asset('css/bootstrap-glyphicons.css') }}" rel="stylesheet">-->
+
     <script src="{{ asset('js/jquery.js') }}"></script>
     <style type="text/css">
         @media (min-width: 992px) {

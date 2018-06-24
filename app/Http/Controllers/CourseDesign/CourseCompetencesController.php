@@ -65,8 +65,6 @@ class CourseCompetencesController extends Controller
         return CourseCompetences::where('course', $course_id)->get();
     }
 
-
-
     //REST FUNCTIONS
     //GET
     public function showEdit()
@@ -108,16 +106,16 @@ class CourseCompetencesController extends Controller
             $rules['ra_' . $i . '_detail'] = "required|string|max:191";
             #Messages
             $messages['ra_' . $i . '.required'] = "El Nombre del resultado de aprendizaje " . $i . " es necesario";
-            $messages['ra_' . $i . '_detail.required'] = "La descripción del resultado de aprendizaje " . $i . " es necesaria";
-
+            $messages['ra_' . $i . '_detail.required'] = "La Descripción del resultado de aprendizaje " . $i . " es necesaria";
 
             $j = 1;
             while (array_key_exists('ra_' . $i . '_achievement_' . $j, $data)) {
+                #Rules
                 $rules['ra_' . $i . '_achievement_' . $j] = "required|string|max:191|unique:achievement_indicators,name";
-                $messages['ra_' . $i . '_achievement_' . $j . ".required"] = "El Nombre del indicador de logro " . $i . "." . $j . " es necesario";
                 $rules['ra_' . $i . '_achievement_' . $j . '_detail'] = "required|string|max:191";
+                #Messages
+                $messages['ra_' . $i . '_achievement_' . $j . ".required"] = "El Nombre del indicador de logro " . $i . "." . $j . " es necesario";
                 $messages['ra_' . $i . '_achievement_' . $j . '_detail.required'] = "La descripción del indicador de logro " . $i . "." . $j . " es necesario";
-
                 $j++;
             }
             if ($j == 1) {
@@ -130,16 +128,23 @@ class CourseCompetencesController extends Controller
             $error = true;
         }
 
+        $validator = $this->validator($data, $rules, $messages);
+        $validator_fails = $validator->fails();
         if ($error) {
             alert()->html("Error!", "<h4>Por cada competencia debe haber al menos 1 resultado de aprendizaje, y por cada resultado de aprendizaje debe haber al menos 1 indicador de logro</h4>", "error")->showCancelButton("Cerrar");
-            return redirect()->back()->with(['_old_input' => $data]);
+            if ($validator_fails) {
+                return redirect()->back()->withErrors($validator)->with(['_old_input' => $data]);
+            }else{
+                return redirect()->back()->with(['_old_input' => $data]);
+            }
         }
 
-        $validator = $this->validator($data, $rules, $messages);
-        if ($validator->fails()) {
-            dd($validator);
+        if ($validator_fails) {
             return redirect()->back()->withErrors($validator)->with(['_old_input' => $data]);
         }
+
+        return redirect()->back()->with(['_old_input'=>$data]);
+        dd($data);
 
         $competence = ['course_id' => $data['course_id'], 'name' => $data['name'], 'detail' => $data['detail']];
         $competenceSave = $this->store($competence);
@@ -160,7 +165,6 @@ class CourseCompetencesController extends Controller
                         $achievement_save = AchievementIndicatorsController::store($achievement);
                         $j += 1;
                     }
-
                 }
                 $i += 1;
                 if ($error) {

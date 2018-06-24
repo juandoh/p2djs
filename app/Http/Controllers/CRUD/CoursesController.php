@@ -172,7 +172,7 @@ class CoursesController extends Controller
 
     //POST
     public function create(Request $request){
-        //dd($request->all());
+        dd($request->all());
 
         $role = Relations::resolveRole(Auth::id());
         if($role == 1 or $role == 2){
@@ -228,10 +228,12 @@ class CoursesController extends Controller
 
             if($this->edit($data,$id)){
                 $i=1;
-                while(array_key_exists('precourse_id_'.$i, $data)){
-                    $exists = (bool)$data['precourse_id_'.$i.'_exists'];
-                    if(!$exists){
-                        Relations::bindCoursePrerequisite($id, (int)$data['precourse_id_'.$i]);
+                while($i < count($data)){
+                    if(array_key_exists('precourse_id_'.$i, $data)) {
+                        $exists = (bool)$data['precourse_id_' . $i . '_exists'];
+                        if (!$exists) {
+                            Relations::bindCoursePrerequisite($id, (int)$data['precourse_id_' . $i]);
+                        }
                     }
                     $i+=1;
                 }

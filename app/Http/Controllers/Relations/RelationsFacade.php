@@ -5,15 +5,12 @@ namespace App\Http\Controllers\Relations;
 use App\User;
 use App\Courses;
 use App\Faculties;
-use App\AcademicPrograms;
 use App\UserAdminRelation;
 use App\UserFacultyRelation;
-use App\Http\Auth\RegistersUsers;
 use App\CoursePrerequisiteRelation;
 use App\UserAcademicProgramRelation;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Facade;
-use App\Http\Controllers\Auth\RegisterController;
+
 
 class RelationsFacade extends Facade {
 
@@ -162,8 +159,8 @@ class RelationsFacade extends Facade {
 		return $relation->save();
 	}
 
-	public static function unbindCoursePrerequisite($course_id,$prerequisite){
-		$relation = CoursePrerequisiteRelation::where('course_id',$course_id)->where('prerequisite',$prerequisite)->first();	
+	public static function unbindCoursePrerequisite($course_id,$prerequisite_id){
+		$relation = CoursePrerequisiteRelation::where('course_id',$course_id)->where('prerequisite',$prerequisite_id)->first();
 		if(is_null($relation))
 			return false;
 
