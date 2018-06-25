@@ -61,7 +61,7 @@
                                                     <div class="col-md-6 col-sm-5">
                                                         <div class="btn-group btn-group-lg"
                                                              style="float:right; padding-top: 10px;">
-                                                            <a class="btn btn btn-info" href="{{ url('/design/course/'.$course->id.'/edit_competence/'.$competence->id) }}">Modificar</a>
+                                                            <a class="btn btn btn-info" href="#">Modificar</a>
                                                             <a class="btn btn-danger" href="#">Eliminar</a>
                                                         </div>
                                                     </div>
@@ -80,7 +80,7 @@
     {{--
     <script type="text/javascript">
         window.onbeforeunload = function() {
-            return "La informacion sin guardar se perderá";
+            return "La información sin guardar se perderá";
         }
     </script>
      --}}

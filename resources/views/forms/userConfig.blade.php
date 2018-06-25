@@ -1,7 +1,7 @@
 @if(isset($user))
     <div class="panel panel-info">        
         <div class="panel-heading">
-            <h4>Datos basicos de usuario:</h4>
+            <h4>Datos básicos de usuario:</h4>
         </div>
         <div class="panel-body">            
             <form class="form-horizontal" method="POST" action="{{ route('updateUser') }}">

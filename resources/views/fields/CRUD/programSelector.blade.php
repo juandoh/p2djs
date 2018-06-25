@@ -16,7 +16,7 @@
 @endphp
 <div class="row">
 	<div class="form-group {{ $errors->has('program_id') ? ' has-error' : '' }}">
-	    {{ Form::label('program_id', 'Seleccione un Programa Academico', ['class' => 'control-label col-md-4']) }}            
+	    {{ Form::label('program_id', 'Seleccione un Programa Académico', ['class' => 'control-label col-md-4']) }}            
 	    <div class="col-md-6">
 		    {{ Form::select('program_id',
 		                    ['-1'=>'']+$programOpt,
