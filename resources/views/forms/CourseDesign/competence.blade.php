@@ -3,32 +3,48 @@
 @section('content')
     <script type="text/javascript">
         @php
-            if(Session::has('_old_input')){
-                $data=Session::get("_old_input");
+            $session_old_input =Session::has('_old_input');
+            $session_data_input = isset($edit_data);
+            if($session_old_input or $session_data_input){
+                if($session_old_input)
+                    $data=Session::get("_old_input");
+                if($session_data_input)
+                    $data=$edit_data;
+
                 //echo "console.log(".json_encode($data).");";
                 $i=1;
                 $learning_outcomes = [];
-                while(array_key_exists('ra_'.$i, $data)){
-                    $item_detail = $data['ra_'.$i.'_detail'];
-                    $item = ["id"=>$i,"name"=>$data['ra_'.$i], "detail"=> (is_null($item_detail)?"":$item_detail) ];
+                $learning_key='ra_'.$i;
+                while(array_key_exists($learning_key, $data)){
+                    $item_detail = $data[$learning_key.'_detail'];
+                    $item = ["id"=>$i,
+                             "name"=>$data[$learning_key],
+                             "detail"=> (is_null($item_detail)?"":$item_detail)];
+
                     $achievements = [];
                     $j = 1;
-                    while(array_key_exists('ra_'.$i.'_achievement_'.$j, $data)){
-                        $achv_detail = $data['ra_'.$i.'_achievement_'.$j.'_detail'];
+                    $achievement_key = $learning_key.'_achievement_'.$j;// ra_i_achievement_j
+                    while(array_key_exists($achievement_key, $data)){
+                        //########################################################################
+                        //########################################################################
+                        $achv_detail = $data[$achievement_key.'_detail'];
                         $achievement = ["father"=>$i,
                                         "id"=>$j,
-                                        "name"=>$data['ra_'.$i.'_achievement_'.$j],
+                                        "name"=>$data[$achievement_key],
                                         "detail"=>(is_null($achv_detail)?"":$achv_detail)];
-
-                        if($errors->has('ra_'.$i.'_achievement_'.$j.'_detail')){
+                        //########################################################################
+                        if($errors->has($achievement_key.'_detail')){
                             $achievement["error"]=true;
-                            $achievement["error_msg"]=$errors->first('ra_'.$i.'_achievement_'.$j.'_detail');
+                            $achievement["error_msg"]=$errors->first($achievement_key.'_detail');
                         }else{
                             $achievement["error"]=false;
                             $achievement["error_msg"]="";
                         }
+                        //########################################################################
                         array_push($achievements, $achievement);
                         $j++;
+                        //########################################################################
+                        $achievement_key = $learning_key.'_achievement_'.$j;
                     }
                     if($errors->has('ra_'.$i.'_detail')){
                         $item["error"]=true;
@@ -40,6 +56,7 @@
                     $item["achievements"]=$achievements;
                     array_push($learning_outcomes, $item);
                     $i++;
+                    $learning_key='ra_'.$i;
                 }
 
                 echo 'var learning_outcomes ='.json_encode($learning_outcomes).';';
@@ -166,7 +183,6 @@
             addAchievement(id);
         }
 
-
         function removeLearningOutcome(id) {
             learning_outcomes.splice(id - 1, 1); //remove element;
             learning_outcomes.forEach(function (item, index) {
@@ -187,7 +203,6 @@
             displayLearningOutcomes();
         }
 
-
         function removeAchievement(ra_id, achv_id) {
             console.log(ra_id, achv_id);
             learning_outcomes[ra_id - 1]["achievements"].splice(achv_id - 1, 1);
@@ -206,15 +221,26 @@
         }
     </script>
 
-    {{  Form::open(["url"=>"/save_competence"])  }}
+    @if($session_data_input)
+        {{  Form::open(["url"=>"/update_competence"])  }}
+    @else
+        {{  Form::open(["url"=>"/save_competence"])  }}
+    @endif
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h4 class="panel-title">
                 <div class="row">
                     <div class="col-md-9 col-sm-9 col-xs-9">
-                        <input type="hidden" name="name" value="Competencia {{ $competence_id }}"/>
                         <input type="hidden" name="course_id" value="{{ $course_id }}"/>
-                        <h4>Competencia {{ $competence_id }}</h4>
+                        @if($session_data_input)
+                            <input type="hidden" name="name" value="{{ $edit_data["name"] }}"/>
+                            <input type="hidden" name="competence_id" value="{{ $competence_id }}">
+                            <h4>{{ $edit_data["name"] }}</h4>
+                        @else
+                            <input type="hidden" name="name" value="Competencia {{ $competence_id }}"/>
+                            <h4>Competencia {{ $competence_id }}</h4>
+                        @endif
+
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-3">
                         <a style="min-width: 90px;" href="{{ url('/design/course/'.$course_id) }}"
@@ -224,19 +250,9 @@
             </h4>
         </div>
         <div class="panel-body">
-            {{--
-            @if($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif--}}
             <div class="form-group {{ ($errors->has("detail")? " has-error":"") }}">
                 <label>Descripción de la competencia</label>
-                {{ Form::textarea("detail", old("detail"), ["class"=>"form-control","rows"=>"3"]) }}
+                {{ Form::textarea("detail", ($session_data_input)?$edit_data["detail"]:old("detail"), ["class"=>"form-control","rows"=>"3"]) }}
                 {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'detail')}}
             </div>
             <div class="panel panel-info">
@@ -261,7 +277,7 @@
                 </div>
             </div>
             <div class="panel-footer">
-                {!! Form::submit("Guardar Competencia", ["class"=>"btn btn-success form-control"]) !!}
+                {!! Form::submit(($session_data_input)?"Modificar Competencia":"Guardar Competencia", ["class"=>"btn btn-success form-control"]) !!}
             </div>
         </div>
     </div>

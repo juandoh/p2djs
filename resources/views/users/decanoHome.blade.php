@@ -14,7 +14,7 @@
                 <?php $tabs=[
                     'consultar'=>'Consultar Cursos',
                     'programas'=>'Consultar Programas',
-                    'crear'=>'Crear Programa Academico',
+                    'crear'=>'Crear Programa Académico',
                     'configuracion'=>'Configuración'
                 ];?>
                 @include('users.homeTabs')                

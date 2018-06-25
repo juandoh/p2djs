@@ -1,6 +1,6 @@
 @if(isset($courses))
     @php
-        $tableHeaders = ['Id','Nombre','Prorgama Academico','Opciones'];
+        $tableHeaders = ['Id','Nombre','Programa Académico','Opciones'];
         $tableContent = array();
         foreach ($courses as $course){
             $row = ['id'=>$course->id,$course->name,$course->program->name,'deleted'=>false];

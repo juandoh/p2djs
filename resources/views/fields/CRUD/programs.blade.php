@@ -2,7 +2,7 @@
     <input type="hidden" name="id" value="{{ $program->id }}"/>
 @endif
 <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">        
-    {{ Form::label('name', 'Nombre del Programa Academico', ['class'=>'control-label']) }}        
+    {{ Form::label('name', 'Nombre del Programa Académico', ['class'=>'control-label']) }}        
     {{ Form::text('name', (isset($program)?$program->name:old('name')), ['class'=>'form-control','required'=>'']) }}
     {{--onkeyup="check('name','fullname','fnamegroup')" --}}
     {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'name')}}
@@ -32,7 +32,7 @@
 </div>
 
 <div class="form-group{{ $errors->has('credits') ? ' has-error' : '' }}" id="creditsgroup">
-    {{ Form::label('credits', 'Creditos', ['class'=>'control-label']) }}
+    {{ Form::label('credits', 'Créditos', ['class'=>'control-label']) }}
     {{ Form::number('credits',(isset($program)?$program->credits:old('credits')),['class'=>'form-control','required'=>'']) }}
     {{-- //onkeyup="check('email','shortname','emailgroup')"  --}}
     {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'credits')}}    

@@ -6,7 +6,7 @@
         $row = ['id'=>$program->id,$program->name,$program->fschool->name,'deleted'=>!is_null($program->deleted_at)];
         array_push($tableContent,$row);
     }
-    $what='Programas Academicos';
+    $what='Programas Académicos';
     $where = 'Program';    
     $links = $programs->links();
 ?>

@@ -1,6 +1,6 @@
 @php
     $options = [
-        '1'=>'Asignatura Basica',
+        '1'=>'Asignatura Básica',
         '2'=>'Asignatura profesional',
         '3'=>'Electiva complementaria',
         '4'=>'Electiva profesional'
@@ -39,7 +39,7 @@
 
 <div class="row {{ $errors->has('weekHours') ? ' has-error' : '' }}">
     <div class="form-group col-md-4 col-sm-4 {{ $errors->has('credits') ? ' has-error' : '' }}">
-        {{ Form::label('credits', 'Creditos:', ['class' => 'control-label']) }}
+        {{ Form::label('credits', 'Créditos:', ['class' => 'control-label']) }}
         {{ Form::number('credits',(isset($course) ? $course->credits:old('credits')),['class'=>'form-control','required'=>'','min'=>0,'max'=>20])  }}
         {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'credits')}}
     </div>
@@ -57,7 +57,7 @@
     </div>
 </div>
 
-<div class="form-group col-md-offset-1 {{ $errors->has('weekHours') ? ' has-error' : '' }}">
+<div class="form-group col-md-offset-0 {{ $errors->has('weekHours') ? ' has-error' : '' }}">
     {{ App\Http\Controllers\CustomValidator::errorHelp($errors,'weekHours')}}
 </div>
 <div class="row">
@@ -74,13 +74,12 @@
                                 {{ Form::radio('ctype',$val) }}
                             @endif
                         @else
-                            @if (old('ctype')==(int)$val)
+                            @if(is_null(old('ctype')))
+                                {{ Form::radio('ctype',$val, ((((int)$val)==1)?true:false)) }}
+                            @elseif( ((int)old("ctype"))== $val )
                                 {{ Form::radio('ctype',$val, true) }}
                             @else
                                 {{ Form::radio('ctype',$val) }}
-                            @endif
-                            @if(is_null(old('ctype')))
-                                {{ Form::radio('ctype',$val, ((((int)$val)==1)?true:false)) }}
                             @endif
                         @endif
                         {{ $opt }}
@@ -92,7 +91,7 @@
     </div>
     <div class="col-md-6">
         <div class="well">
-            {{ Form::label('', 'Caracteristicas:', ['class' => 'control-label']) }}
+            {{ Form::label('', 'Características:', ['class' => 'control-label']) }}
             <br>
             <div class="row">
                 {{ Form::label('valuable', 'Validable:', ['class' => 'control-label col-md-4']) }}

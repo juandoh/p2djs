@@ -8,7 +8,7 @@
 		@php
 			if(true){
 				$codigo =" en php";
-				echo $codigo;
+					echo $codigo;
 			}	
 		@endphp
 		

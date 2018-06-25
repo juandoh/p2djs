@@ -61,8 +61,13 @@
                                                     <div class="col-md-6 col-sm-5">
                                                         <div class="btn-group btn-group-lg"
                                                              style="float:right; padding-top: 10px;">
-                                                            <a class="btn btn btn-info" href="#">Modificar</a>
-                                                            <a class="btn btn-danger" href="#">Eliminar</a>
+                                                            <a class="btn btn btn-info" href="{{ url('/design/course/'.$course->id.'/edit_competence/'.$competence->id) }}">Modificar</a>
+                                                            <a class="btn btn-danger" onclick="$('#eliminarCompetencia').submit()">Eliminar
+                                                                {{ Form::open(['url'=>'/delete_competence', 'id'=>"eliminarCompetencia", 'style'=>"display:none;"]) }}
+                                                                    <input type="hidden" name="competence_id" value="{{ $competence->id }}">
+                                                                    <input type="hidden" name="course_id" value="{{ $course->id }}">
+                                                                {{ Form::close() }}
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -80,7 +85,7 @@
     {{--
     <script type="text/javascript">
         window.onbeforeunload = function() {
-            return "La información sin guardar se perderá";
+            return "La informacion sin guardar se perderá";
         }
     </script>
      --}}

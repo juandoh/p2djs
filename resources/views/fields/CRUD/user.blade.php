@@ -140,7 +140,7 @@
     @endif
 
     <script>                                                    
-        function check(id,field,target){
+        function check(id,fielrget){
             var data = $('#'+id).val();                                                        
             axios.post('{{ route('check') }}', {
                 field: field, data: data
