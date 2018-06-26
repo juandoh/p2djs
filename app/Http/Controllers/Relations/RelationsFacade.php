@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Relations;
 
 use App\User;
 use App\Courses;
+use App\AcademicPrograms;
+use App\AchievementIndicators;
+use App\CourseCompetences;
+use App\LearningOutcomes;
 use App\Faculties;
 use App\UserAdminRelation;
 use App\UserFacultyRelation;
@@ -186,4 +190,45 @@ class RelationsFacade extends Facade {
 		return $preList;
 	}
 	
+	public static function getCourseInSemester($program_id, $semestre){
+
+		$relation = Courses::where('program_id',$program_id)->get();
+		$courseInSemester = [];
+		foreach($relation as $row){
+			//$course = Courses::find($row->name);
+			if($row->semester == $semestre){
+
+				array_push($courseInSemester, $row);	
+			}
+			
+		}
+		return $courseInSemester;
+
+	}
+	
+	public static function getCourseCompetences($course_id){
+
+		return CourseCompetences::where('course',$course_id)->get();
+		
+	}
+
+	public static function getCompetenceResult($id){
+
+		return LearningOutcomes::where('competence', $id)->get();
+	}
+
+	public static function getAchievements($id){
+		return AchievementIndicators::where('learningO', $id)->get();
+	}
+
+
+
+
+	public static function getUserName($user_id){
+
+		$teacher = User::where('id', $user_id)->get();
+
+		return $teacher;
+	}
+
 }

@@ -127,7 +127,7 @@ class AcademicProgramsController extends Controller
     public function delete($id){
         if(!is_null($id)){
             //dd(User::find($id)->trashed());
-            $role =User::resolveRole(Auth::id());
+            $role =Relations::resolveRole(Auth::id());
             if($role == 3 or $role==0){
                 if(AcademicPrograms::find($id)->delete()){
                     alert()->success("Exito!","El Programa Academico ha sido eliminado. Recuerde que debido a dependencias solo se desactiva");

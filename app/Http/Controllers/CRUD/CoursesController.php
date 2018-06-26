@@ -6,15 +6,10 @@ use Auth;
 use Alert;
 use Relations;
 use App\Courses;
-use App\AcademicPrograms;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\CourseDesign\CourseCompetencesController;
-use App\Http\Controllers\CourseDesign\LearningOutcomesController;
-use App\Http\Controllers\CourseDesign\AchievementIndicatorsController;
 
 class CoursesController extends Controller
 {
@@ -94,6 +89,15 @@ class CoursesController extends Controller
 
     public static function allTeacherCourses(){
         return Courses::where('created_by',Auth::id())->paginate(10);
+    }
+
+    public static function coursesByProgram(){
+        if(Relations::isDirector(Auth::id())) {
+            $program_id = Relations::getProgramRelation(Auth::id())->program_id;
+            return Courses::where('program_id', $program_id)->paginate(10);
+        }else {
+            return null;
+        }
     }
 
     public static function paginateCourses(){
