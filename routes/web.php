@@ -41,6 +41,7 @@ Route::get('/user/{id?}','Session\RootController@editUser');
 Route::get('/user/{id?}/{editWhat?}','Session\RootController@editUser');
 
 
+
 $arr = [
     'Faculty'=> 'CRUD\Faculties',
     'School' => 'CRUD\Schools',
@@ -65,16 +66,22 @@ foreach($arr as $name=>$control){
 }
 
 Route::get('/design/course/{id}','CRUD\CoursesController@showDesigner');
-Route::get('/info/course/{id}','CRUD\CoursesController@showInfo');
 Route::post('/deletePrerequisite','CRUD\CoursesController@deletePrerequisite')->name("deletePrerequisite");
 
+Route::get('/design/course/{id}/show','CourseDesign\CourseCompetencesController@showDesign');
 Route::get('/design/course/{id}/new', 'CourseDesign\CourseCompetencesController@showCreate');
 Route::get('/design/course/{id}/edit_competence/{competence_id}', 'CourseDesign\CourseCompetencesController@showEdit');
+
 Route::post('/save_competence', 'CourseDesign\CourseCompetencesController@create');
-Route::post('/update_competence', 'CourseDesign\CourseCompetencesController@create');
-Route::post('/delete_competence', 'CourseDesign\CourseCompetencesController@create');
+Route::post('/update_competence', 'CourseDesign\CourseCompetencesController@update');
+Route::post('/delete_competence', 'CourseDesign\CourseCompetencesController@delete');
 
 //##########################################TEST################
 Route::get('/post','Testing\PostController@show')->name('post');
 Route::post('/post','Testing\PostController@store');
 Route::get('/post/input','Testing\PostController@input');
+Route::get('/info/course/{id}/report', 'Reports\ReportController@getCourseReport'); 
+Route::get('/program/{id}/report' ,'Reports\ReportController@getProgramReport');
+
+
+Route::get('/test', 'Reports\ReportController@testPdf');
