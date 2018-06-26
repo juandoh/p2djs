@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Diseño de Cursos'),
 
     /*
     |--------------------------------------------------------------------------
@@ -178,6 +178,11 @@ return [
         App\Providers\RouteServiceProvider::class,
         RealRashid\SweetAlert\SweetAlertServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
+        /*
+        *----Generate Data to PDF------
+        */
+        Barryvdh\DomPDF\serviceProvider::class,
+
     ],
 
     /*
@@ -230,6 +235,7 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'Relations' => App\Http\Controllers\Relations\RelationsFacade::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
     ],
 
 ];
