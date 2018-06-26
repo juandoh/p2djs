@@ -7,7 +7,7 @@
         array_push($tableContent,$row);
     }
     $what='Programas Académicos';
-    $where = 'Program';    
+    $where = 'Program';
     $links = $programs->links();
 ?>
     @include('lists.masterlist')

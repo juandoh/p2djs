@@ -2,6 +2,7 @@
 
 @section('content')
     @if(isset($course))
+        @php  if(!isset($show)) $show=false;@endphp
         <div class="panel-group">
             <div class="panel panel-success">
                 <div class="panel-heading">
@@ -28,12 +29,14 @@
                                         <h4>Competencias</h4>
                                     </label>
                                 </div>
-                                <div class="col-md-4 col-sm-3 col-xs-3">
-                                    <a class="btn btn-default btn-lg" style="float:right;" id="addCompetence"
-                                       href="/design/course/{{ $course->id }}/new">
-                                        Agregar Competencia
-                                    </a>
-                                </div>
+                                @if(!$show)
+                                    <div class="col-md-4 col-sm-3 col-xs-3">
+                                        <a class="btn btn-default btn-lg" style="float:right;" id="addCompetence"
+                                           href="/design/course/{{ $course->id }}/new">
+                                            Agregar Competencia
+                                        </a>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                         <div class="panel-body">
@@ -55,23 +58,58 @@
                                                             <label>
                                                                 {{ $competence->name }}:
                                                             </label>
-                                                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $competence->detail }}</div>
+                                                            @if(!$show)
+                                                                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $competence->detail }}</div>
+                                                            @endif
                                                         </h4>
                                                     </div>
-                                                    <div class="col-md-6 col-sm-5">
-                                                        <div class="btn-group btn-group-lg"
-                                                             style="float:right; padding-top: 10px;">
-                                                            <a class="btn btn btn-info" href="{{ url('/design/course/'.$course->id.'/edit_competence/'.$competence->id) }}">Modificar</a>
-                                                            <a class="btn btn-danger" onclick="$('#eliminarCompetencia').submit()">Eliminar
-                                                                {{ Form::open(['url'=>'/delete_competence', 'id'=>"eliminarCompetencia", 'style'=>"display:none;"]) }}
-                                                                    <input type="hidden" name="competence_id" value="{{ $competence->id }}">
-                                                                    <input type="hidden" name="course_id" value="{{ $course->id }}">
-                                                                {{ Form::close() }}
-                                                            </a>
+                                                    @if(!$show)
+                                                        <div class="col-md-6 col-sm-5">
+                                                            <div class="btn-group btn-group-lg"
+                                                                 style="float:right; padding-top: 10px;">
+                                                                <a class="btn btn btn-info"
+                                                                   href="{{ url('/design/course/'.$course->id.'/edit_competence/'.$competence->id) }}">Modificar</a>
+                                                                <a class="btn btn-danger"
+                                                                   onclick="$('#eliminarCompetencia').submit()">Eliminar
+                                                                    {{ Form::open(['url'=>'/delete_competence', 'id'=>"eliminarCompetencia", 'style'=>"display:none;"]) }}
+                                                                    <input type="hidden" name="competence_id"
+                                                                           value="{{ $competence->id }}">
+                                                                    <input type="hidden" name="course_id"
+                                                                           value="{{ $course->id }}">
+                                                                    {{ Form::close() }}
+                                                                </a>
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    @endif
                                                 </div>
                                             </div>
+                                            @if($show)
+                                                <div class="panel-body">
+                                                    <label>Descripción: {{ $competence->detail }}</label>
+                                                    @php
+                                                        $learning_outcomes = $competence->learning_outcomes()->get();
+                                                    @endphp
+                                                    <ul>
+                                                        @foreach($learning_outcomes as $learning_outcome)
+                                                            <li>
+                                                                <label>{{$learning_outcome->name}}</label>
+                                                                <p>{{$learning_outcome->detail}}</p>
+                                                            </li>
+                                                            @php
+                                                                $indicators = $learning_outcome->indicators()->get();
+                                                            @endphp
+                                                            <ul>
+                                                                @foreach($indicators as $indicator)
+                                                                    <li>
+                                                                        <label>{{$indicator->name}}</label>
+                                                                        <p>{{$indicator->detail}}</p>
+                                                                    </li>
+                                                                @endforeach
+                                                            </ul>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endif
                                         </div>
                                     @endforeach
                                 @endisset()

@@ -16,8 +16,7 @@
                     $tabs=[
                         'consultar'=>'Consultar Cursos',
                         'crear'=>'Crear Cursos',
-                        'configuracion'=>'Configuración',
-                        'reportes'=>"Reportes de Aplicación" //home/reportes
+                        'configuracion'=>'Configuración'
                     ];
                 @endphp                
                 @include('users.homeTabs')
@@ -45,9 +44,7 @@
                         @include('forms.userConfig', ['user'=>Auth::user()])
                     </div>
                 @endif 
-                @if($tab === 'reportes')
-                    @include('reports.report')
-                @endif
+                
             </div>
         </div>
     </div>        
